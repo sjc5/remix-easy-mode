@@ -33,6 +33,8 @@ export default function Index() {
           // Try changing "name" below -- it will cause a TS error
           name="some_user_input"
         />
+
+        <button type="submit">Submit</button>
       </FormHelper>
 
       {!!fetcher.data?.success && (

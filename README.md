@@ -80,6 +80,8 @@ export default function Index() {
           label="Whatever"
           name="some_user_input"
         />
+
+        <button type="submit">Submit</button>
       </FormHelper>
 
       {fetcher.data?.success ? <div>{fetcher.data.result}</div> : null}
