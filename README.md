@@ -2,17 +2,16 @@
 
 ## Description
 
-Opinionated toolkit (framework?) for developing highly interactive, typesafe Remix apps. Built with zod and superjson. Inspired by the TRPC / React Query DX. Leans heavily into the "full stack components" concept.
+Opinionated toolkit for developing highly interactive, typesafe Remix apps. Built with zod and superjson. Inspired by the TRPC / React Query DX.
 
 ## Features
 
-- Automatic client and server-side form validations
-- Typesafe form input fields in client-side helper components
-- Typesafe data responses in client-side hooks
-- Typesafe session middleware support
+- Automatic form validations (client-side and server-side)
+- Typesafe form inputs and data responses via helper components / hooks
+- Typesafe session middleware support (via "bouncer" pattern)
 - Typesafe session and input values passed to server-side callbacks
-- Automatic error handling and (stylable!) error message display
-- Form helpers are unstyled, so you can style them however you want
+- Automatic error handling and error message display
+- Component helpers are unstyled, so you can style them however you want
 
 ## Installation
 
@@ -99,6 +98,6 @@ MIT
 
 ## Caveats
 
-- This is a work in progress. It's not yet battle-tested, and the API may change without notice. If you want to use this in production, definitely set your dependency to a specific version.
-- As of now, I'm building this mostly for myself, and that's why it's (1) so simple and (2) so opinionated. It may evolve to be more flexible over time – we shall see.
-- If you know of smarter ways to do these things without massively overcomplicating this mental model, please let me know!
+- This is a work in progress. It's not yet battle-tested, and the API may change without notice. If you want to use this in production, set your dependency to a specific version.
+- This library is admittedly super simple and super opinionated. It may evolve to be more flexible over time – we shall see.
+- If you know of smarter ways to do these things without massively overcomplicating the mental model, please let me know!
