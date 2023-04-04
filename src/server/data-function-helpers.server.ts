@@ -63,14 +63,18 @@ export const data_function_helper = async <T, U, B>({
         ctx,
         input_schema,
       })
-    } catch (e) {
-      return handle_api_error({
-        error: e,
-        error_message: "Invalid input.",
-        response_init: {
-          status: 400,
-        },
-      })
+    } catch (thrown_res) {
+      if (thrown_res instanceof Error) {
+        return handle_api_error({
+          error: thrown_res,
+          error_message: "Invalid input.",
+          response_init: {
+            status: 400,
+          },
+        })
+      }
+
+      throw thrown_res
     }
 
     let bouncer_res: AsyncReturnType<typeof run_bouncer<T, B>> | undefined
@@ -80,14 +84,18 @@ export const data_function_helper = async <T, U, B>({
         bouncer,
         ...parse_input_res,
       })
-    } catch (e) {
-      return handle_api_error({
-        error: e,
-        error_message: "Unauthorized.",
-        response_init: {
-          status: 401,
-        },
-      })
+    } catch (thrown_res) {
+      if (thrown_res instanceof Error) {
+        return handle_api_error({
+          error: thrown_res,
+          error_message: "Unauthorized.",
+          response_init: {
+            status: 401,
+          },
+        })
+      }
+
+      throw thrown_res
     }
 
     return handle_api_success({
@@ -96,13 +104,17 @@ export const data_function_helper = async <T, U, B>({
         headers,
       },
     })
-  } catch (e) {
-    return handle_api_error({
-      error: e,
-      error_message: "Something went wrong.",
-      response_init: {
-        status: 500,
-      },
-    })
+  } catch (thrown_res) {
+    if (thrown_res instanceof Error) {
+      return handle_api_error({
+        error: thrown_res,
+        error_message: "Something went wrong.",
+        response_init: {
+          status: 500,
+        },
+      })
+    }
+
+    throw thrown_res
   }
 }
