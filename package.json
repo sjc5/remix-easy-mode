@@ -1,0 +1,71 @@
+{
+  "name": "remix-easy-mode",
+  "version": "0.0.19",
+  "author": {
+    "name": "Sam Cook",
+    "email": "email@samcook.cc",
+    "url": "https://samcook.cc"
+  },
+  "license": "MIT",
+  "description": "Opinionated toolkit for developing highly interactive, typesafe Remix apps. Built with zod and superjson, and inspired by the TRPC / React Query DX. Provides automatic client and server-side form validations, typesafe form input fields, automatic error handling and easy-to-display error messages, typesafe session middleware support, typesafe session and input values in server-side functions, and typesafe form input values and fetcher responses in client-side hooks and components.",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "dependencies": {},
+  "devDependencies": {
+    "@changesets/cli": "^2.26.1",
+    "@remix-run/react": "^1.15.0",
+    "@remix-run/server-runtime": "^1.15.0",
+    "@types/react": "^18.0.33",
+    "react": "^18.2.0",
+    "superjson": "^1.12.2",
+    "tsup": "^6.7.0",
+    "typescript": "^5.0.3",
+    "zod": "^3.21.4"
+  },
+  "peerDependencies": {
+    "@remix-run/react": "^1.15.0",
+    "@remix-run/server-runtime": "^1.15.0",
+    "react": "^17 || ^18",
+    "superjson": "^1",
+    "zod": "^3"
+  },
+  "scripts": {
+    "build": "tsup index.ts --format cjs,esm --dts",
+    "release": "pnpm run build && changeset publish",
+    "lint": "tsc"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sjc5/remix-easy-mode.git"
+  },
+  "homepage": "https://github.com/sjc5/remix-easy-mode#readme",
+  "bugs": "https://github.com/sjc5/remix-easy-mode/issues",
+  "keywords": [
+    "remix",
+    "hooks",
+    "toolkit",
+    "typescript",
+    "typesafe",
+    "api",
+    "zod",
+    "easy mode",
+    "query",
+    "mutation",
+    "action",
+    "loader",
+    "form",
+    "validation",
+    "form validation",
+    "bouncer",
+    "session",
+    "middleware",
+    "zod",
+    "superjson",
+    "libary",
+    "framework"
+  ]
+}
