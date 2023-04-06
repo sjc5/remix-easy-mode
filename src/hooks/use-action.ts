@@ -5,12 +5,11 @@ import type { z, ZodSchema, ZodType } from "zod"
 import type { OnResolveProps } from "./use-on-resolve"
 import { useOnResolve } from "./use-on-resolve"
 import {
-  SimpleSerializeFrom,
   flatten_safe_parse_errors,
   get_fetcher_state,
   obj_to_fd,
+  prep_loader_res,
 } from "../common/common-helpers"
-import { parse } from "superjson"
 
 export type HookOptions = {}
 
@@ -40,9 +39,9 @@ export function useAction<A extends ActionFunction, S>({
     on_settled: initial_props.on_settled,
   })
 
-  const typed_fetcher_res = fetcher.data
-    ? (parse(fetcher.data) as SimpleSerializeFrom<A>)
-    : undefined
+  const typed_fetcher_res = prep_loader_res<A>({
+    stringified_res: fetcher.data,
+  })
 
   useOnResolve({
     fetcher,

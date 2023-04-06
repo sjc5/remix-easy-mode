@@ -1,13 +1,11 @@
 import type { Fetcher } from "@remix-run/react"
 import type { z } from "zod"
 import { stringify, parse } from "superjson"
+import { ActionFunction, LoaderFunction } from "@remix-run/node"
 
 export type AsyncReturnType<T extends (...args: any) => any> = Awaited<
   ReturnType<T>
 >
-
-export type SimpleSerializeFrom<T extends (...args: any[]) => any | undefined> =
-  Awaited<ReturnType<Awaited<ReturnType<T>>["json"]>>
 
 export const flatten_safe_parse_errors = <T>(
   safe_parse_res: z.SafeParseError<T>
@@ -50,18 +48,18 @@ export const get_fetcher_state = (fetcher: Fetcher) => {
   }
 }
 
-export const prep_loader_res = <LoaderType extends (...args: any) => any>({
+export const prep_loader_res = <A extends ActionFunction | LoaderFunction>({
   stringified_res,
 }: {
   stringified_res: string | undefined
 }) => {
-  return stringified_res
-    ? (parse(stringified_res) as SimpleSerializeFrom<LoaderType>)
-    : undefined
+  return (stringified_res ? parse(stringified_res) : undefined) as
+    | AsyncReturnType<A>
+    | undefined
 }
 
 export const prep_loader_res_throw = <
-  LoaderType extends (...args: any) => any
+  LoaderType extends ActionFunction | LoaderFunction
 >({
   stringified_res,
 }: {

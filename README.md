@@ -63,7 +63,7 @@ import { FormHelper, InputHelper } from "remix-easy-mode"
 import { useExampleHook } from "./resource-route"
 
 export default function Index() {
-  const { run, form_props, fetcher } = useExampleHook()
+  const { run, form_props, result } = useExampleHook()
 
   return (
     <div>
@@ -82,7 +82,7 @@ export default function Index() {
         <button type="submit">Submit</button>
       </FormHelper>
 
-      {fetcher.data?.success ? <div>{fetcher.data.result}</div> : null}
+      <pre>{JSON.stringify(result, null, 2)}</pre>
     </div>
   )
 }

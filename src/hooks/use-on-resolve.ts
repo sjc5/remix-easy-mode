@@ -5,12 +5,13 @@ import {
   handle_api_success,
 } from "../server/api-responses.server"
 import {
-  SimpleSerializeFrom,
+  AsyncReturnType,
   get_fetcher_state,
+  prep_loader_res,
 } from "../common/common-helpers"
-import { parse } from "superjson"
+import { ActionFunction } from "@remix-run/node"
 
-export const useOnResolve = <A extends (...args: any[]) => any>({
+export const useOnResolve = <A extends ActionFunction>({
   fetcher,
   on_success,
   on_error,
@@ -18,19 +19,17 @@ export const useOnResolve = <A extends (...args: any[]) => any>({
 }: {
   fetcher: Fetcher
 } & OnResolveProps<A>) => {
-  type Result = SimpleSerializeFrom<
-    typeof handle_api_success<A> | typeof handle_api_error
-  >
-
-  const { is_error, is_success, is_loading } = get_fetcher_state(fetcher)
+  const { is_error, is_success } = get_fetcher_state(fetcher)
 
   const is_settled = is_error || is_success
 
-  const typed_fetcher_res = fetcher.data
-    ? (parse(fetcher.data) as Result)
-    : undefined
+  const typed_fetcher_res = prep_loader_res<A>({
+    stringified_res: fetcher.data,
+  })
 
   useEffect(() => {
+    if (!typed_fetcher_res) return
+
     if (is_success && on_success) {
       on_success(typed_fetcher_res)
     }
@@ -43,20 +42,14 @@ export const useOnResolve = <A extends (...args: any[]) => any>({
   }, [is_error, is_settled, is_success, on_error, on_settled, on_success])
 }
 
-export type OnResolveProps<A extends (...args: any[]) => any> = {
+export type OnResolveProps<A extends ActionFunction> = {
   on_success?: (
-    data: SimpleSerializeFrom<
-      typeof handle_api_success<A> | typeof handle_api_error
-    >
+    data: AsyncReturnType<typeof handle_api_success<AsyncReturnType<A>["data"]>>
   ) => void
-  on_error?: (
-    data: SimpleSerializeFrom<
-      typeof handle_api_success<A> | typeof handle_api_error
-    >
-  ) => void
+  on_error?: (data: AsyncReturnType<typeof handle_api_error>) => void
   on_settled?: (
-    data: SimpleSerializeFrom<
-      typeof handle_api_success<A> | typeof handle_api_error
-    >
+    data:
+      | AsyncReturnType<typeof handle_api_success<AsyncReturnType<A>["data"]>>
+      | AsyncReturnType<typeof handle_api_error>
   ) => void
 }

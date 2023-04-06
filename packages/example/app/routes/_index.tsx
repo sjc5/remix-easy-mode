@@ -36,7 +36,7 @@ export default function Index() {
         <button type="submit">Submit</button>
       </FormHelper>
 
-      <pre>{JSON.stringify(result, null, 2)}</pre>
+      <pre>{JSON.stringify(result?.data, null, 2)}</pre>
     </div>
   )
 }

@@ -38,7 +38,7 @@ export const useExampleHook = () => {
       need typesafe form inputs and don't care about the fetcher
       response shape, you can omit the generics.
       */
-      console.log("Jerry")
+      console.log("Jerry", result)
     },
   })
 }
