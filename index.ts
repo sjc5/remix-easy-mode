@@ -1,7 +1,7 @@
 // common
 export * from "./src/common/common-helpers"
 
-// client/hooks
+// hooks
 export * from "./src/hooks/use-action"
 export * from "./src/hooks/use-deserialize-loader-data"
 export * from "./src/hooks/use-on-resolve"
