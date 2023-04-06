@@ -1,4 +1,4 @@
-import type { DataFunctionArgs } from "@remix-run/server-runtime"
+import type { DataFunctionArgs } from "@remix-run/node"
 import { obj_from_fd } from "../common/common-helpers"
 
 export const obj_from_ctx = async (ctx: DataFunctionArgs) => {

@@ -1,15 +1,15 @@
-import superjson from "superjson"
 import { useRef, useState } from "react"
 import { FormProps } from "../hooks/use-action"
+import { stringify } from "superjson"
 
-export function InputHelperUnstyled<T>({
+export function InputHelper<T>({
   label,
   name,
   form_props,
   value,
   styles,
   ...props
-}: InputHelperUnstyledProps<T>) {
+}: InputHelperProps<T>) {
   const [value_state, set_value_state] = useState(
     props.type === "checkbox"
       ? props.defaultChecked ?? false
@@ -27,7 +27,7 @@ export function InputHelperUnstyled<T>({
       <input
         name={name}
         type="hidden"
-        value={superjson.stringify(
+        value={stringify(
           props.type === "checkbox"
             ? ref.current?.checked ?? false
             : value_state
@@ -55,14 +55,14 @@ export function InputHelperUnstyled<T>({
   )
 }
 
-export function TextAreaHelperUnstyled<T>({
+export function TextAreaHelper<T>({
   label,
   name,
   form_props,
   value,
   styles,
   ...props
-}: TextAreaHelperUnstyledProps<T>) {
+}: TextAreaHelperProps<T>) {
   const [value_state, set_value_state] = useState(props.defaultValue ?? "")
 
   const errors = form_props.validation_errors?.[name]?.map(
@@ -71,11 +71,7 @@ export function TextAreaHelperUnstyled<T>({
 
   return (
     <div>
-      <input
-        name={name}
-        type="hidden"
-        value={superjson.stringify(value_state)}
-      />
+      <input name={name} type="hidden" value={stringify(value_state)} />
 
       <label className={styles?.label_wrapper}>
         <span className={styles?.label_span}>{label}</span>
@@ -135,17 +131,17 @@ export type TextAreaStyles = InputStylesBase & {
   text_area?: string
 }
 
-export type InputHelperUnstyledBaseProps<T> = {
+export type InputHelperBaseProps<T> = {
   label: string
   name: keyof T extends string ? keyof T : never
   form_props: FormProps<T>
   value?: T[keyof T]
 }
 
-export type InputHelperUnstyledProps<T> = InputHelperUnstyledBaseProps<T> & {
+export type InputHelperProps<T> = InputHelperBaseProps<T> & {
   styles?: InputStyles
 } & Omit<React.InputHTMLAttributes<HTMLInputElement>, "value">
 
-export type TextAreaHelperUnstyledProps<T> = InputHelperUnstyledBaseProps<T> & {
+export type TextAreaHelperProps<T> = InputHelperBaseProps<T> & {
   styles?: TextAreaStyles
 } & Omit<React.TextareaHTMLAttributes<HTMLTextAreaElement>, "value">

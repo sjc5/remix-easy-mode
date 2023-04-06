@@ -1,4 +1,4 @@
-import { BouncerProps } from "../src/server/data-function-helpers.server"
+import { BouncerProps } from "../../../index"
 
 /*
 Bouncers get passed the action/loader context (ctx) and the

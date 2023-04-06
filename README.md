@@ -24,7 +24,7 @@ npm i remix-easy-mode zod superjson
 Example resource route:
 
 ```tsx
-import type { DataFunctionArgs } from "@remix-run/server-runtime"
+import type { DataFunctionArgs } from "@remix-run/node"
 import { data_function_helper, useAction } from "remix-easy-mode"
 import { z } from "zod"
 
@@ -51,9 +51,7 @@ export const useExampleHook = () => {
   return useAction<typeof action, typeof input_schema>({
     path: "/resource-route",
     input_schema,
-    on_success: (data) => {
-      console.log(data.success ? data.result : data.error)
-    },
+    on_success: (data) => console.log(data),
   })
 }
 ```
@@ -61,7 +59,7 @@ export const useExampleHook = () => {
 Example client-side form:
 
 ```tsx
-import { FormHelper, InputHelperUnstyled } from "remix-easy-mode"
+import { FormHelper, InputHelper } from "remix-easy-mode"
 import { useExampleHook } from "./resource-route"
 
 export default function Index() {
@@ -75,7 +73,7 @@ export default function Index() {
           run({ input, csrf_token: "" })
         }}
       >
-        <InputHelperUnstyled
+        <InputHelper
           form_props={form_props}
           label="Whatever"
           name="some_user_input"
@@ -90,9 +88,17 @@ export default function Index() {
 }
 ```
 
-## Examples
+## Example App
 
-More fulsome examples (with comments) are available in the `examples` folder.
+To run the example app:
+
+```bash
+pnpm install
+cd packages/example
+pnpm run dev
+```
+
+Then visit `localhost:3000`.
 
 ## License
 
@@ -103,3 +109,4 @@ MIT
 - This is a work in progress. It's not yet battle-tested, and the API may change without notice. If you want to use this in production, set your dependency to a specific version.
 - This library is admittedly super simple and super opinionated. It may evolve to be more flexible over time – we shall see.
 - If you know of smarter ways to do these things without massively overcomplicating the mental model, please let me know!
+- Yep, snake case. You won't talk me out of it.

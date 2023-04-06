@@ -1,24 +1,26 @@
-import { json } from "@remix-run/server-runtime"
+import { stringify } from "superjson"
 
-export const handle_api_success = <U>({
+export const handle_api_success = async <U>({
   result,
   response_init,
 }: {
   result: U
   response_init?: ResponseInit
 }) => {
-  return json(
-    {
-      success: true as const,
-      result: result,
-      error: null,
-      at: Date.now(),
-    },
+  const payload = {
+    success: true as const,
+    data: result,
+    error: null,
+    at: Date.now(),
+  }
+
+  return new Response(
+    stringify(payload),
     response_init
-  )
+  ) as unknown as typeof payload
 }
 
-export const handle_api_error = ({
+export const handle_api_error = async ({
   error,
   error_message,
   response_init,
@@ -29,16 +31,15 @@ export const handle_api_error = ({
 }) => {
   console.error(error)
 
-  return json(
-    {
-      success: false as const,
-      result: null,
-      error: error_message || "Something went wrong.",
-      at: Date.now(),
-    },
-    {
-      ...response_init,
-      status: response_init?.status || 500,
-    }
-  )
+  const payload = {
+    success: false as const,
+    data: null,
+    error: error_message || "Something went wrong.",
+    at: Date.now(),
+  }
+
+  return new Response(stringify(payload), {
+    ...response_init,
+    status: response_init?.status || 500,
+  }) as unknown as typeof payload
 }

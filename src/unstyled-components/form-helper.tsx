@@ -6,7 +6,7 @@ import { FormProps } from "../hooks/use-action"
 
 export function FormHelper<T>({
   on_submit,
-  form_props: { set_validation_errors, input_schema },
+  form_props: { set_validation_errors, input_schema, options },
   ...props
 }: {
   on_submit: ({
@@ -37,10 +37,14 @@ export function FormHelper<T>({
             })
           }
 
-          return set_validation_errors(flattened_errors)
+          set_validation_errors(flattened_errors)
+          return
         }
 
-        on_submit({ input: parsed_obj.data, e })
+        on_submit({
+          input: parsed_obj.data,
+          e,
+        })
       }}
       {...props}
     >

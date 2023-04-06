@@ -1,23 +1,31 @@
 import { FetcherWithComponents, useFetcher } from "@remix-run/react"
+import type { ActionFunction } from "@remix-run/node"
 import { useState, useCallback } from "react"
 import type { z, ZodSchema, ZodType } from "zod"
-import type { ChildResponse, OnResolveProps } from "./use-on-resolve"
+import type { OnResolveProps } from "./use-on-resolve"
 import { useOnResolve } from "./use-on-resolve"
 import {
-  get_fetcher_state,
+  SimpleSerializeFrom,
   flatten_safe_parse_errors,
+  get_fetcher_state,
   obj_to_fd,
 } from "../common/common-helpers"
+import { parse } from "superjson"
 
-export function useAction<A extends (...args: any[]) => any, S>({
+export type HookOptions = {}
+
+export function useAction<A extends ActionFunction, S>({
   path,
   input_schema,
+  options,
   ...initial_props
 }: {
   path: string
   input_schema: S extends ZodType ? S : never
-} & OnResolveProps<A>) {
-  const fetcher = useFetcher<ChildResponse<A>>()
+} & OnResolveProps<A> & {
+    options?: HookOptions
+  }) {
+  const fetcher = useFetcher<A>()
   const fetcher_state = get_fetcher_state(fetcher)
 
   type InputSchema = z.infer<typeof input_schema>
@@ -32,6 +40,10 @@ export function useAction<A extends (...args: any[]) => any, S>({
     on_settled: initial_props.on_settled,
   })
 
+  const typed_fetcher_res = fetcher.data
+    ? (parse(fetcher.data) as SimpleSerializeFrom<A>)
+    : undefined
+
   useOnResolve({
     fetcher,
     ...on_resolve,
@@ -44,17 +56,17 @@ export function useAction<A extends (...args: any[]) => any, S>({
         }
     ) => {
       set_on_resolve({
-        on_success: async (data) => {
-          props.on_success?.(data)
-          initial_props.on_success?.(data)
+        on_success: async (result) => {
+          props.on_success?.(result)
+          initial_props.on_success?.(result)
         },
-        on_error: async (data) => {
-          props.on_error?.(data)
-          initial_props.on_error?.(data)
+        on_error: async (result) => {
+          props.on_error?.(result)
+          initial_props.on_error?.(result)
         },
-        on_settled: async (data) => {
-          props.on_settled?.(data)
-          initial_props.on_settled?.(data)
+        on_settled: async (result) => {
+          props.on_settled?.(result)
+          initial_props.on_settled?.(result)
         },
       })
 
@@ -62,7 +74,8 @@ export function useAction<A extends (...args: any[]) => any, S>({
 
       if (!parsed_input.success) {
         const errors = flatten_safe_parse_errors(parsed_input)
-        return set_validation_errors(errors)
+        set_validation_errors(errors)
+        return
       } else {
         set_validation_errors(null)
       }
@@ -83,12 +96,14 @@ export function useAction<A extends (...args: any[]) => any, S>({
 
   return {
     ...fetcher_state,
-    fetcher: fetcher as FetcherWithComponents<ChildResponse<A>>,
+    fetcher: fetcher as FetcherWithComponents<A>,
+    result: typed_fetcher_res,
     run: callback,
     form_props: {
       input_schema,
       set_validation_errors,
       validation_errors,
+      options: options ?? {},
     },
   }
 }
@@ -105,4 +120,5 @@ export type FormProps<T> = {
   set_validation_errors: SetValidationErrorsType<T>
   input_schema: ZodSchema<T>
   validation_errors: ValidationErrors<T>
+  options: HookOptions
 }

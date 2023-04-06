@@ -1,4 +1,4 @@
-import type { DataFunctionArgs } from "@remix-run/server-runtime"
+import type { DataFunctionArgs } from "@remix-run/node"
 import { obj_from_ctx } from "./helpers.server"
 import type { AsyncReturnType } from "../common/common-helpers"
 import { handle_api_error, handle_api_success } from "./api-responses.server"
@@ -43,19 +43,29 @@ const run_bouncer = async <T, B>({
   return { session, input: parsed_input }
 }
 
+type DataFunctionHelperOptions = {
+  send_raw_errors?: boolean
+  throw_on_error?: boolean
+}
+
 export const data_function_helper = async <T, U, B>({
   ctx,
   input_schema,
   callback,
   bouncer,
   headers,
+  options,
 }: {
   ctx: DataFunctionArgs
   input_schema: ZodSchema<T>
   callback: (props: AsyncReturnType<typeof run_bouncer<T, B>>) => Promise<U>
   bouncer: Bouncer<B>
   headers?: Headers
+  options?: DataFunctionHelperOptions
 }) => {
+  const send_raw_errors = options?.send_raw_errors ?? false
+  const throw_on_error = options?.throw_on_error ?? false
+
   try {
     let parse_input_res: AsyncReturnType<typeof parse_input<T>> | undefined
     try {
@@ -65,9 +75,15 @@ export const data_function_helper = async <T, U, B>({
       })
     } catch (thrown_res) {
       if (thrown_res instanceof Error) {
+        if (throw_on_error) {
+          throw thrown_res
+        }
+
         return handle_api_error({
           error: thrown_res,
-          error_message: "Invalid input.",
+          error_message: send_raw_errors
+            ? thrown_res.message
+            : "Invalid input.",
           response_init: {
             status: 400,
           },
@@ -85,10 +101,14 @@ export const data_function_helper = async <T, U, B>({
         ...parse_input_res,
       })
     } catch (thrown_res) {
+      if (throw_on_error) {
+        throw thrown_res
+      }
+
       if (thrown_res instanceof Error) {
         return handle_api_error({
           error: thrown_res,
-          error_message: "Unauthorized.",
+          error_message: send_raw_errors ? thrown_res.message : "Unauthorized.",
           response_init: {
             status: 401,
           },
@@ -105,10 +125,16 @@ export const data_function_helper = async <T, U, B>({
       },
     })
   } catch (thrown_res) {
+    if (throw_on_error) {
+      throw thrown_res
+    }
+
     if (thrown_res instanceof Error) {
       return handle_api_error({
         error: thrown_res,
-        error_message: "Something went wrong.",
+        error_message: send_raw_errors
+          ? thrown_res.message
+          : "Something went wrong.",
         response_init: {
           status: 500,
         },

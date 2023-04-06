@@ -1,3 +1,9 @@
 node_modules
 dist
+
+packages/example/.cache
+packages/example/build
+packages/example/public/build
+
+.env
 .DS_Store

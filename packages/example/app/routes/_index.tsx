@@ -1,11 +1,10 @@
-import { FormHelper } from "../src/unstyled-components/unstyled-form-helper"
-import { InputHelperUnstyled } from "../src/unstyled-components/unstyled-input-helper"
-import { useExampleHook } from "./example-resource-route"
+import { FormHelper, InputHelper } from "../../../../index"
+import { useExampleHook } from "./api"
 
 export default function Index() {
   const csrf_token = "5" // <-- try passing "4" -- the example bouncer will reject it
 
-  const { run, form_props, fetcher } = useExampleHook()
+  const { run, form_props, result } = useExampleHook()
 
   // HINT: Always make sure to pass "form_props" to the helper components. Otherwise
   // the magic won't work.
@@ -27,7 +26,7 @@ export default function Index() {
         will go through, and the input will be validated again on the
         server before being passed to the bouncer and then the action
         callback. */}
-        <InputHelperUnstyled
+        <InputHelper
           form_props={form_props}
           label="Hello world"
           // Try changing "name" below -- it will cause a TS error
@@ -37,10 +36,7 @@ export default function Index() {
         <button type="submit">Submit</button>
       </FormHelper>
 
-      {!!fetcher.data?.success && (
-        /* Data is typesafe here IF you passed generics to the hook during setup. */
-        <div>{fetcher.data.result.message_to_display}</div>
-      )}
+      <pre>{JSON.stringify(result, null, 2)}</pre>
     </div>
   )
 }
