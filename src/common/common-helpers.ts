@@ -6,8 +6,8 @@ export type ResolvedPromise<T extends (...args: any) => any> = Awaited<
   ReturnType<T>
 >
 
-export type SimpleSerializeFrom<T extends (...args: any[]) => any | undefined> =
-  Awaited<ReturnType<Awaited<ReturnType<T>>["json"]>>
+// export type SimpleSerializeFrom<T extends (...args: any[]) => any | undefined> =
+//   Awaited<ReturnType<Awaited<ReturnType<T>>["json"]>>
 
 export const flatten_safe_parse_errors = <T>(
   safe_parse_res: z.SafeParseError<T>

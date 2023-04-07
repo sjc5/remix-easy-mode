@@ -1,15 +1,10 @@
 import type { Fetcher } from "@remix-run/react"
-import { useEffect, useMemo } from "react"
+import { useEffect } from "react"
 import {
   handle_api_error,
   handle_api_success,
 } from "../server/api-responses.server"
-import {
-  ResolvedPromise,
-  SimpleSerializeFrom,
-  get_fetcher_state,
-} from "../common/common-helpers"
-import { ActionFunction } from "@remix-run/node"
+import { ResolvedPromise, get_fetcher_state } from "../common/common-helpers"
 
 export const useOnResolve = <Data>({
   fetcher,
@@ -33,7 +28,15 @@ export const useOnResolve = <Data>({
     if (is_settled && on_settled) {
       on_settled(fetcher.data)
     }
-  }, [is_error, is_settled, is_success, on_error, on_settled, on_success])
+  }, [
+    fetcher.data,
+    is_error,
+    is_settled,
+    is_success,
+    on_error,
+    on_settled,
+    on_success,
+  ])
 }
 
 export type OnResolveProps<Data> = {
