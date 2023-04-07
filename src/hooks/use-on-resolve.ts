@@ -1,55 +1,47 @@
 import type { Fetcher } from "@remix-run/react"
-import { useEffect } from "react"
+import { useEffect, useMemo } from "react"
 import {
   handle_api_error,
   handle_api_success,
 } from "../server/api-responses.server"
 import {
-  AsyncReturnType,
+  ResolvedPromise,
+  SimpleSerializeFrom,
   get_fetcher_state,
-  prep_loader_res,
 } from "../common/common-helpers"
 import { ActionFunction } from "@remix-run/node"
 
-export const useOnResolve = <A extends ActionFunction>({
+export const useOnResolve = <Data>({
   fetcher,
   on_success,
   on_error,
   on_settled,
 }: {
   fetcher: Fetcher
-} & OnResolveProps<A>) => {
+} & OnResolveProps<Data>) => {
   const { is_error, is_success } = get_fetcher_state(fetcher)
 
   const is_settled = is_error || is_success
 
-  const typed_fetcher_res = prep_loader_res<A>({
-    stringified_res: fetcher.data,
-  })
-
   useEffect(() => {
-    if (!typed_fetcher_res) return
-
     if (is_success && on_success) {
-      on_success(typed_fetcher_res)
+      on_success(fetcher.data)
     }
     if (is_error && on_error) {
-      on_error(typed_fetcher_res)
+      on_error(fetcher.data)
     }
     if (is_settled && on_settled) {
-      on_settled(typed_fetcher_res)
+      on_settled(fetcher.data)
     }
   }, [is_error, is_settled, is_success, on_error, on_settled, on_success])
 }
 
-export type OnResolveProps<A extends ActionFunction> = {
-  on_success?: (
-    data: AsyncReturnType<typeof handle_api_success<AsyncReturnType<A>["data"]>>
-  ) => void
-  on_error?: (data: AsyncReturnType<typeof handle_api_error>) => void
+export type OnResolveProps<Data> = {
+  on_success?: (data: ResolvedPromise<typeof handle_api_success<Data>>) => void
+  on_error?: (data: ResolvedPromise<typeof handle_api_error>) => void
   on_settled?: (
     data:
-      | AsyncReturnType<typeof handle_api_success<AsyncReturnType<A>["data"]>>
-      | AsyncReturnType<typeof handle_api_error>
+      | ResolvedPromise<typeof handle_api_success<Data>>
+      | ResolvedPromise<typeof handle_api_error>
   ) => void
 }

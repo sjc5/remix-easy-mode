@@ -2,7 +2,7 @@
 
 ## Description
 
-Opinionated toolkit for developing highly interactive, typesafe Remix apps. Built with zod and superjson. Inspired by the TRPC / React Query DX.
+Opinionated toolkit for developing highly interactive, typesafe Remix apps. Built with zod, and inspired by the TRPC / React Query DX (type-safety + react-query style "on settled" callbacks), plus a few extra goodies (such as typesafe form helpers with automatic client-side validations).
 
 ## Features
 
@@ -16,7 +16,7 @@ Opinionated toolkit for developing highly interactive, typesafe Remix apps. Buil
 ## Installation
 
 ```bash
-npm i remix-easy-mode zod superjson
+npm i remix-easy-mode zod
 ```
 
 ## Usage
@@ -37,11 +37,15 @@ export const action = (ctx: DataFunctionArgs) => {
     ctx,
     input_schema,
     bouncer: async ({ ctx, csrf_token }) => {
-      // return session or throw error
+      // do whatever you want here
+      // throw an error if something is wrong
     },
     callback: async ({ input, session }) => {
       // do whatever you want here
-      return "Wow, that was easy!" as const
+      return {
+        message: "Wow, that was easy!" as const
+        at: new Date()
+      }
     },
   })
 }
@@ -70,7 +74,7 @@ export default function Index() {
       <FormHelper
         form_props={form_props}
         on_submit={({ input }) => {
-          run({ input, csrf_token: "" })
+          run({ input })
         }}
       >
         <InputHelper
@@ -107,6 +111,6 @@ MIT
 ## Caveats
 
 - This is a work in progress. It's not yet battle-tested, and the API may change without notice. If you want to use this in production, set your dependency to a specific version.
-- This library is admittedly super simple and super opinionated. It may evolve to be more flexible over time – we shall see.
+- This toolkit is really simple and really opinionated. It's not for everyone, and that's OK.
 - If you know of smarter ways to do these things without massively overcomplicating the mental model, please let me know!
 - Yep, snake case. You won't talk me out of it.

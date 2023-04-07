@@ -1,6 +1,6 @@
 import { useRef, useState } from "react"
 import { FormProps } from "../hooks/use-action"
-import { stringify } from "superjson"
+import { stringify } from "remix-typedjson"
 
 export function InputHelper<T>({
   label,
@@ -98,15 +98,15 @@ const ZodErrorsDisplay = ({
   errors: string[] | undefined
   styles?: {
     errors_wrapper?: string
-    error?: (i: number) => string
+    error?: (index: number) => string
   }
 }) => {
   return (
     <>
       {Boolean(errors?.length) && (
         <div className={styles?.errors_wrapper}>
-          {errors?.map((error, i) => (
-            <div className={styles?.error?.(i)} key={error}>
+          {errors?.map((error, index) => (
+            <div className={styles?.error?.(index)} key={error}>
               {error}
             </div>
           ))}

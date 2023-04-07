@@ -1,40 +1,51 @@
 import type { DataFunctionArgs } from "@remix-run/node"
 import { obj_from_ctx } from "./helpers.server"
-import type { AsyncReturnType } from "../common/common-helpers"
+import type { ResolvedPromise } from "../common/common-helpers"
 import { handle_api_error, handle_api_success } from "./api-responses.server"
-import type { ZodSchema } from "zod"
+import { ZodObject, ZodRawShape, ZodSchema, z } from "zod"
 
 export type BouncerProps = {
   ctx: DataFunctionArgs
-  csrf_token: string
+  csrf_token: string | undefined
 }
 
-type Bouncer<SessionType> = (props: BouncerProps) => Promise<SessionType>
+type NarrowBouncer<SessionType> = (props: BouncerProps) => Promise<SessionType>
+type BroadBouncer<SessionType> = NarrowBouncer<SessionType> | null | undefined
 
-const parse_input = async <T>({
+type NarrowZodSchema<
+  RawShape extends ZodRawShape,
+  Schema extends ZodObject<RawShape>["_output"]
+> = ZodSchema<Schema>
+
+type BroadZodSchema<
+  RawShape extends ZodRawShape,
+  Schema extends ZodObject<RawShape>["_output"]
+> = NarrowZodSchema<RawShape, Schema> | null | undefined
+
+const parse_input = async <Schema>({
   ctx,
   input_schema,
 }: {
   ctx: DataFunctionArgs
-  input_schema: ZodSchema<T>
+  input_schema: ZodSchema<Schema>
 }) => {
   const fd = await obj_from_ctx(ctx)
 
   return {
     parsed_input: input_schema.parse(fd.input),
-    csrf_token: (fd.csrf_token as string) || "",
+    csrf_token: (fd.csrf_token as string) || undefined,
   }
 }
 
-const run_bouncer = async <T, B>({
+const run_bouncer = async <Schema, Bouncer>({
   ctx,
   bouncer,
   csrf_token,
   parsed_input,
 }: {
   ctx: DataFunctionArgs
-  bouncer: Bouncer<B>
-} & AsyncReturnType<typeof parse_input<T>>) => {
+  bouncer: NarrowBouncer<Bouncer>
+} & ResolvedPromise<typeof parse_input<Schema>>) => {
   const session = await bouncer({
     ctx,
     csrf_token,
@@ -48,7 +59,12 @@ type DataFunctionHelperOptions = {
   throw_on_error?: boolean
 }
 
-export const data_function_helper = async <T, U, B>({
+export const data_function_helper = async <
+  ZodObjectOutput extends ZodObject<RawShape>["_output"],
+  CallbackRes,
+  Bouncer,
+  RawShape extends ZodRawShape
+>({
   ctx,
   input_schema,
   callback,
@@ -57,9 +73,11 @@ export const data_function_helper = async <T, U, B>({
   options,
 }: {
   ctx: DataFunctionArgs
-  input_schema: ZodSchema<T>
-  callback: (props: AsyncReturnType<typeof run_bouncer<T, B>>) => Promise<U>
-  bouncer: Bouncer<B>
+  input_schema: BroadZodSchema<any, ZodObjectOutput>
+  callback: (
+    props: ResolvedPromise<typeof run_bouncer<ZodObjectOutput, Bouncer>>
+  ) => Promise<CallbackRes>
+  bouncer: BroadBouncer<Bouncer>
   headers?: Headers
   options?: DataFunctionHelperOptions
 }) => {
@@ -67,11 +85,15 @@ export const data_function_helper = async <T, U, B>({
   const throw_on_error = options?.throw_on_error ?? false
 
   try {
-    let parse_input_res: AsyncReturnType<typeof parse_input<T>> | undefined
+    let parse_input_res:
+      | ResolvedPromise<typeof parse_input<ZodObjectOutput>>
+      | undefined
     try {
       parse_input_res = await parse_input({
         ctx,
-        input_schema,
+        input_schema:
+          input_schema ??
+          (z.undefined() as unknown as ZodSchema<ZodObjectOutput>),
       })
     } catch (thrown_res) {
       if (thrown_res instanceof Error) {
@@ -93,12 +115,18 @@ export const data_function_helper = async <T, U, B>({
       throw thrown_res
     }
 
-    let bouncer_res: AsyncReturnType<typeof run_bouncer<T, B>> | undefined
     try {
-      bouncer_res = await run_bouncer({
+      const bouncer_res = await run_bouncer({
         ctx,
-        bouncer,
+        bouncer: bouncer ?? (() => Promise.resolve(undefined as Bouncer)),
         ...parse_input_res,
+      })
+
+      return handle_api_success({
+        result: await callback(bouncer_res),
+        response_init: {
+          headers,
+        },
       })
     } catch (thrown_res) {
       if (throw_on_error) {
@@ -117,13 +145,6 @@ export const data_function_helper = async <T, U, B>({
 
       throw thrown_res
     }
-
-    return handle_api_success({
-      result: await callback(bouncer_res),
-      response_init: {
-        headers,
-      },
-    })
   } catch (thrown_res) {
     if (throw_on_error) {
       throw thrown_res

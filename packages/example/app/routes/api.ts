@@ -3,9 +3,11 @@ import { z } from "zod"
 import { data_function_helper, useAction } from "../../../../index"
 import { bouncer } from "../bouncer"
 
+export const REQUIRED_INPUT_STRING = "hello world"
+
 const input_schema = z.object({
-  some_user_input: z.literal("hello world", {
-    invalid_type_error: `Oops, you were supposed to type "hello world"!`,
+  some_user_input: z.string().refine((val) => val !== "bad message", {
+    message: `Oops, you weren't supposed to write that!`,
   }),
 })
 
@@ -15,13 +17,14 @@ export const action = (ctx: DataFunctionArgs) => {
     input_schema,
     bouncer,
     callback: async ({ input, session }) => {
-      const status_text = session.user.is_logged_in
+      const status_text = session.user
         ? `logged in as user ${session.user.id}`
         : "not logged in"
 
       return {
-        message_to_display:
+        message:
           `You are ${status_text}. You typed: ${input.some_user_input}.` as const,
+        at: new Date(),
       }
     },
   })
@@ -38,7 +41,10 @@ export const useExampleHook = () => {
       need typesafe form inputs and don't care about the fetcher
       response shape, you can omit the generics.
       */
-      console.log("Jerry", result)
+      console.log("Jerry", result.data)
+    },
+    options: {
+      // skip_client_validation: true,
     },
   })
 }

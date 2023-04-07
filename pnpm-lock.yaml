@@ -3,6 +3,10 @@ lockfileVersion: '6.0'
 importers:
 
   .:
+    dependencies:
+      remix-typedjson:
+        specifier: ^0.1.7
+        version: 0.1.7(@remix-run/react@1.15.0)(@remix-run/server-runtime@1.15.0)(react@18.2.0)
     devDependencies:
       '@changesets/cli':
         specifier: ^2.26.1
@@ -19,9 +23,6 @@ importers:
       react:
         specifier: ^18.2.0
         version: 18.2.0
-      superjson:
-        specifier: ^1.12.2
-        version: 1.12.2
       tsup:
         specifier: ^6.7.0
         version: 6.7.0(typescript@5.0.3)
@@ -65,9 +66,6 @@ importers:
       '@types/react-dom':
         specifier: ^18.0.8
         version: 18.0.8
-      superjson:
-        specifier: ^1.12.2
-        version: 1.12.2
       typescript:
         specifier: ^5.0.3
         version: 5.0.3
@@ -3197,13 +3195,6 @@ packages:
     engines: {node: '>= 0.6'}
     dev: true
 
-  /copy-anything@3.0.3:
-    resolution: {integrity: sha512-fpW2W/BqEzqPp29QS+MwwfisHCQZtiduTe/m8idFo0xbti9fIZ2WVhAsCv4ggFVH3AgCkVdpoOCtQC6gBrdhjw==}
-    engines: {node: '>=12.13'}
-    dependencies:
-      is-what: 4.1.8
-    dev: true
-
   /core-js-compat@3.30.0:
     resolution: {integrity: sha512-P5A2h/9mRYZFIAP+5Ab8ns6083IyVpSclU74UNvbGVQ8VM7n3n3/g2yF3AkKQ9NXz2O+ioxLbEWKnDtgsFamhg==}
     dependencies:
@@ -4634,11 +4625,6 @@ packages:
     resolution: {integrity: sha512-qctsuLZmIQ0+vSSMfoVvyFe2+GSEvnmZ2ezTup1SBse9+twCCeial6EEi3Nc2KFcf6+qz2FBPnjXsk8xhKSaPQ==}
     dependencies:
       call-bind: 1.0.2
-    dev: true
-
-  /is-what@4.1.8:
-    resolution: {integrity: sha512-yq8gMao5upkPoGEU9LsB2P+K3Kt8Q3fQFCGyNCWOAnJAMzEXVV9drYb0TXr42TTliLLhKIBvulgAXgtLLnwzGA==}
-    engines: {node: '>=12.13'}
     dev: true
 
   /is-windows@1.0.2:
@@ -6369,6 +6355,18 @@ packages:
       unified: 10.1.2
     dev: true
 
+  /remix-typedjson@0.1.7(@remix-run/react@1.15.0)(@remix-run/server-runtime@1.15.0)(react@18.2.0):
+    resolution: {integrity: sha512-h7WoKbKBGsVdZZp3s79U5SDrMvQ3We7BjGaSIPxchnJOTS3GUDat0kBoy/gh9TVKRf5KYCee+K1UlFAYQmLQsA==}
+    peerDependencies:
+      '@remix-run/react': ^1.6.5
+      '@remix-run/server-runtime': ^1.6.5
+      react: ^17.0.2 || ^18.0.0
+    dependencies:
+      '@remix-run/react': 1.15.0(react-dom@18.2.0)(react@18.2.0)
+      '@remix-run/server-runtime': 1.15.0
+      react: 18.2.0
+    dev: false
+
   /require-directory@2.1.1:
     resolution: {integrity: sha512-fGxEI7+wsG9xrvdjsrlmL22OMTTiHRwAMroiEeMgq8gzoLC/PQr7RsRDSTLUg/bZAZtF+TVIkHc6/4RIKrui+Q==}
     engines: {node: '>=0.10.0'}
@@ -6855,13 +6853,6 @@ packages:
       mz: 2.7.0
       pirates: 4.0.5
       ts-interface-checker: 0.1.13
-    dev: true
-
-  /superjson@1.12.2:
-    resolution: {integrity: sha512-ugvUo9/WmvWOjstornQhsN/sR9mnGtWGYeTxFuqLb4AiT4QdUavjGFRALCPKWWnAiUJ4HTpytj5e0t5HoMRkXg==}
-    engines: {node: '>=10'}
-    dependencies:
-      copy-anything: 3.0.3
     dev: true
 
   /supports-color@5.5.0:

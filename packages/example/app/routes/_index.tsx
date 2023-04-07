@@ -1,10 +1,10 @@
 import { FormHelper, InputHelper } from "../../../../index"
-import { useExampleHook } from "./api"
+import { REQUIRED_INPUT_STRING, useExampleHook } from "./api"
 
 export default function Index() {
-  const csrf_token = "5" // <-- try passing "4" -- the example bouncer will reject it
-
   const { run, form_props, result } = useExampleHook()
+
+  const csrf_token = expected_csrf_token
 
   // HINT: Always make sure to pass "form_props" to the helper components. Otherwise
   // the magic won't work.
@@ -14,9 +14,15 @@ export default function Index() {
         form_props={form_props}
         on_submit={({ input }) => {
           // These input values are typesafe :)
-          console.log(input.some_user_input)
+          console.log(input)
 
-          run({ input, csrf_token })
+          run({
+            input,
+            csrf_token,
+            options: {
+              // skip_client_validation: false,
+            },
+          })
         }}
       >
         {/* Form validation runs client-side on submit, and if it fails,
@@ -31,12 +37,15 @@ export default function Index() {
           label="Hello world"
           // Try changing "name" below -- it will cause a TS error
           name="some_user_input"
+          defaultValue={REQUIRED_INPUT_STRING}
         />
 
         <button type="submit">Submit</button>
       </FormHelper>
 
-      <pre>{JSON.stringify(result?.data, null, 2)}</pre>
+      <pre>{JSON.stringify(result, null, 2)}</pre>
     </div>
   )
 }
+
+export const expected_csrf_token = "9d*73sdu/d/s"
