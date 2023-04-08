@@ -1,4 +1,4 @@
-import type { DataFunctionArgs } from "@remix-run/node"
+import type { DataFunctionArgs } from "@remix-run/server-runtime"
 import { obj_from_fd } from "@kiruna/form-data"
 
 export const obj_from_ctx = async (ctx: DataFunctionArgs) => {

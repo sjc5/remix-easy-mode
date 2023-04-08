@@ -24,7 +24,7 @@ npm i remix-easy-mode zod
 Example resource route:
 
 ```tsx
-import type { DataFunctionArgs } from "@remix-run/node"
+import type { DataFunctionArgs } from "@remix-run/<your-server-runtime>"
 import { data_function_helper, useAction } from "remix-easy-mode"
 import { z } from "zod"
 

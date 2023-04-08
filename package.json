@@ -23,7 +23,6 @@
   "devDependencies": {
     "@changesets/cli": "^2.26.1",
     "@remix-run/eslint-config": "^1.15.0",
-    "@remix-run/node": "^1.15.0",
     "@remix-run/react": "^1.15.0",
     "@types/react": "^18.0.33",
     "eslint": "^8.37.0",
@@ -34,6 +33,7 @@
   },
   "peerDependencies": {
     "@remix-run/react": "^1.15.0",
+    "@remix-run/server-runtime": "^1.15.0",
     "react": "^17 || ^18",
     "zod": "^3"
   },

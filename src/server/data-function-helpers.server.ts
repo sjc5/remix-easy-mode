@@ -1,4 +1,4 @@
-import type { DataFunctionArgs } from "@remix-run/node"
+import type { DataFunctionArgs } from "@remix-run/server-runtime"
 import { obj_from_ctx } from "./helpers.server"
 import { handle_api_error, handle_api_success } from "./api-responses.server"
 import type { ZodObject, ZodRawShape, ZodSchema } from "zod"

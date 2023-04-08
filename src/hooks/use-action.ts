@@ -1,6 +1,6 @@
 import type { FetcherWithComponents } from "@remix-run/react"
 import { useFetcher } from "@remix-run/react"
-import type { ActionFunction } from "@remix-run/node"
+import type { ActionFunction } from "@remix-run/server-runtime"
 import { useState, useCallback } from "react"
 import type { ZodSchema, ZodType } from "zod"
 import { z } from "zod"
