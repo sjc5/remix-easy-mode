@@ -1,15 +1,15 @@
-import { FetcherWithComponents, useFetcher } from "@remix-run/react"
+import type { FetcherWithComponents } from "@remix-run/react"
+import { useFetcher } from "@remix-run/react"
 import type { ActionFunction } from "@remix-run/node"
 import { useState, useCallback } from "react"
-import { z, ZodSchema, ZodType } from "zod"
+import type { ZodSchema, ZodType } from "zod"
+import { z } from "zod"
 import type { OnResolveProps } from "./use-on-resolve"
 import { useOnResolve } from "./use-on-resolve"
-import {
-  ResolvedPromise,
-  flatten_safe_parse_errors,
-  get_fetcher_state,
-  obj_to_fd,
-} from "../common/common-helpers"
+import { get_rem_fetcher_state } from "../common/common-helpers"
+import { obj_to_fd } from "@kiruna/form-data"
+import { flatten_safe_parse_errors } from "@kiruna/zod"
+import type { FromPromise } from "@kiruna/promises"
 
 export type ClientOptions = {
   skip_client_validation?: boolean
@@ -23,20 +23,20 @@ export function useAction<Action extends ActionFunction, Schema>({
 }: {
   path: string
   input_schema: Schema extends ZodType ? Schema : null | undefined
-} & OnResolveProps<ResolvedPromise<Action>["data"]> & {
+} & OnResolveProps<FromPromise<Action>["data"]> & {
     options?: ClientOptions
   }) {
   const fetcher = useFetcher<Action>()
-  const { is_loading } = get_fetcher_state(fetcher)
+  const { is_loading } = get_rem_fetcher_state(fetcher)
 
   type SchemaOutput = Schema extends ZodType ? z.infer<Schema> : unknown
 
   const [validation_errors, set_validation_errors] = useState<
-    { [P in allKeys<SchemaOutput>]?: string[] | undefined } | undefined
+    { [P in keyof SchemaOutput]?: string[] | undefined } | undefined
   >(undefined)
 
   const [on_resolve, set_on_resolve] = useState<
-    OnResolveProps<ResolvedPromise<Action>>
+    OnResolveProps<FromPromise<Action>>
   >({
     on_success: initial_props.on_success,
     on_error: initial_props.on_error,
@@ -99,7 +99,7 @@ export function useAction<Action extends ActionFunction, Schema>({
 
       fetcher.submit(
         obj_to_fd({
-          ...props,
+          csrf_token: props.csrf_token,
           input: parsed_input.data,
         }),
         {
@@ -108,13 +108,13 @@ export function useAction<Action extends ActionFunction, Schema>({
         }
       )
     },
-    [input_schema, path, fetcher, initial_props]
+    [input_schema, path, fetcher, initial_props, options]
   )
 
   return {
     is_loading,
     fetcher: fetcher as FetcherWithComponents<Action>,
-    result: fetcher.data as ResolvedPromise<Action>,
+    result: fetcher.data as FromPromise<Action>,
     run: callback,
     form_props: {
       input_schema,
@@ -125,15 +125,11 @@ export function useAction<Action extends ActionFunction, Schema>({
   }
 }
 
-type allKeys<V> = V extends any ? keyof V : never
-
 type SetValidationErrorsType<T> = React.Dispatch<
-  React.SetStateAction<{ [P in allKeys<T>]?: string[] | undefined } | undefined>
+  React.SetStateAction<{ [P in keyof T]?: string[] | undefined } | undefined>
 >
 
-type ValidationErrors<T> =
-  | { [P in allKeys<T>]?: string[] | undefined }
-  | undefined
+type ValidationErrors<T> = { [P in keyof T]?: string[] | undefined } | undefined
 
 export type FormProps<Schema> = {
   set_validation_errors: SetValidationErrorsType<Schema>

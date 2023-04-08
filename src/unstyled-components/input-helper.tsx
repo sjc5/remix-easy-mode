@@ -1,147 +1,156 @@
-import { useRef, useState } from "react"
-import { FormProps } from "../hooks/use-action"
-import { stringify } from "remix-typedjson"
+import { useMemo, useRef, useState } from 'react'
+import type { FormProps } from '../hooks/use-action'
 
 export function InputHelper<T>({
-  label,
-  name,
-  form_props,
-  value,
-  styles,
-  ...props
+	label,
+	name,
+	form_props,
+	value,
+	styles,
+	stringify_fn,
+	...props
 }: InputHelperProps<T>) {
-  const [value_state, set_value_state] = useState(
-    props.type === "checkbox"
-      ? props.defaultChecked ?? false
-      : props.defaultValue ?? ""
-  )
+	const [value_state, set_value_state] = useState(
+		props.type === 'checkbox'
+			? props.defaultChecked ?? false
+			: props.defaultValue ?? '',
+	)
 
-  const errors = form_props.validation_errors?.[name]?.map(
-    (error: string) => error
-  )
+	const errors = form_props.validation_errors?.[name]?.map(
+		(error: string) => error,
+	)
 
-  const ref = useRef<HTMLInputElement>(null)
+	const input_value = useMemo(() => {
+		const to_be_stringified =
+			props.type === 'checkbox' ? ref.current?.checked ?? false : value_state
 
-  return (
-    <div>
-      <input
-        name={name}
-        type="hidden"
-        value={stringify(
-          props.type === "checkbox"
-            ? ref.current?.checked ?? false
-            : value_state
-        )}
-      />
+		return stringify_fn
+			? stringify_fn(to_be_stringified)
+			: JSON.stringify(to_be_stringified)
+	}, [stringify_fn, value_state, props.type])
 
-      <label className={styles?.label_wrapper}>
-        <span className={styles?.label_span}>{label}</span>
+	const ref = useRef<HTMLInputElement>(null)
 
-        <input
-          {...props}
-          className={styles?.input}
-          onChange={(e) => {
-            set_value_state(
-              props.type === "checkbox" ? e.target.checked : e.target.value
-            )
-            props.onChange?.(e)
-          }}
-          ref={ref}
-        />
-      </label>
+	return (
+		<div>
+			<input name={name} type="hidden" value={input_value} />
 
-      <ZodErrorsDisplay errors={errors} styles={styles} />
-    </div>
-  )
+			<label className={styles?.label_wrapper}>
+				<span className={styles?.label_span}>{label}</span>
+
+				<input
+					{...props}
+					className={styles?.input}
+					onChange={(e) => {
+						set_value_state(
+							props.type === 'checkbox' ? e.target.checked : e.target.value,
+						)
+						props.onChange?.(e)
+					}}
+					ref={ref}
+				/>
+			</label>
+
+			<ZodErrorsDisplay errors={errors} styles={styles} />
+		</div>
+	)
 }
 
 export function TextAreaHelper<T>({
-  label,
-  name,
-  form_props,
-  value,
-  styles,
-  ...props
+	label,
+	name,
+	form_props,
+	value,
+	styles,
+	stringify_fn,
+	...props
 }: TextAreaHelperProps<T>) {
-  const [value_state, set_value_state] = useState(props.defaultValue ?? "")
+	const [value_state, set_value_state] = useState(props.defaultValue ?? '')
 
-  const errors = form_props.validation_errors?.[name]?.map(
-    (error: any) => error
-  )
+	const errors = form_props.validation_errors?.[name]?.map(
+		(error: any) => error,
+	)
 
-  return (
-    <div>
-      <input name={name} type="hidden" value={stringify(value_state)} />
+	const input_value = useMemo(() => {
+		return stringify_fn
+			? stringify_fn(value_state)
+			: JSON.stringify(value_state)
+	}, [stringify_fn, value_state])
 
-      <label className={styles?.label_wrapper}>
-        <span className={styles?.label_span}>{label}</span>
+	return (
+		<div>
+			<input name={name} type="hidden" value={input_value} />
 
-        <textarea
-          {...props}
-          className={styles?.text_area}
-          onChange={(e) => {
-            set_value_state(e.target.value)
-            props.onChange?.(e)
-          }}
-        />
-      </label>
+			<label className={styles?.label_wrapper}>
+				<span className={styles?.label_span}>{label}</span>
 
-      <ZodErrorsDisplay errors={errors} styles={styles} />
-    </div>
-  )
+				<textarea
+					{...props}
+					className={styles?.text_area}
+					onChange={(e) => {
+						set_value_state(e.target.value)
+						props.onChange?.(e)
+					}}
+				/>
+			</label>
+
+			<ZodErrorsDisplay errors={errors} styles={styles} />
+		</div>
+	)
 }
 
 const ZodErrorsDisplay = ({
-  errors,
-  styles,
+	errors,
+	styles,
 }: {
-  errors: string[] | undefined
-  styles?: {
-    errors_wrapper?: string
-    error?: (index: number) => string
-  }
+	errors: string[] | undefined
+	styles?: {
+		errors_wrapper?: string
+		error?: (index: number) => string
+	}
 }) => {
-  return (
-    <>
-      {Boolean(errors?.length) && (
-        <div className={styles?.errors_wrapper}>
-          {errors?.map((error, index) => (
-            <div className={styles?.error?.(index)} key={error}>
-              {error}
-            </div>
-          ))}
-        </div>
-      )}
-    </>
-  )
+	return (
+		<>
+			{Boolean(errors?.length) && (
+				<div className={styles?.errors_wrapper}>
+					{errors?.map((error, index) => (
+						<div className={styles?.error?.(index)} key={error}>
+							{error}
+						</div>
+					))}
+				</div>
+			)}
+		</>
+	)
 }
 
 export type InputStylesBase = {
-  label_wrapper?: string
-  label_span?: string
-  errors_wrapper?: string
-  error?: (i: number) => string
+	label_wrapper?: string
+	label_span?: string
+	errors_wrapper?: string
+	error?: (i: number) => string
 }
 
 export type InputStyles = InputStylesBase & {
-  input?: string
+	input?: string
 }
 
 export type TextAreaStyles = InputStylesBase & {
-  text_area?: string
+	text_area?: string
 }
 
 export type InputHelperBaseProps<T> = {
-  label: string
-  name: keyof T extends string ? keyof T : never
-  form_props: FormProps<T>
-  value?: T[keyof T]
+	label: string
+	name: keyof T extends string ? keyof T : never
+	form_props: FormProps<T>
+	value?: T[keyof T]
+	stringify_fn?: (data: any) => string
 }
 
 export type InputHelperProps<T> = InputHelperBaseProps<T> & {
-  styles?: InputStyles
-} & Omit<React.InputHTMLAttributes<HTMLInputElement>, "value">
+	styles?: InputStyles
+} & Omit<React.InputHTMLAttributes<HTMLInputElement>, 'value'>
 
 export type TextAreaHelperProps<T> = InputHelperBaseProps<T> & {
-  styles?: TextAreaStyles
-} & Omit<React.TextareaHTMLAttributes<HTMLTextAreaElement>, "value">
+	styles?: TextAreaStyles
+} & Omit<React.TextareaHTMLAttributes<HTMLTextAreaElement>, 'value'>

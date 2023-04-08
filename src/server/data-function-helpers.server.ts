@@ -1,8 +1,9 @@
 import type { DataFunctionArgs } from "@remix-run/node"
 import { obj_from_ctx } from "./helpers.server"
-import type { ResolvedPromise } from "../common/common-helpers"
 import { handle_api_error, handle_api_success } from "./api-responses.server"
-import { ZodObject, ZodRawShape, ZodSchema, z } from "zod"
+import type { ZodObject, ZodRawShape, ZodSchema } from "zod"
+import { z } from "zod"
+import type { FromPromise } from "@kiruna/promises"
 
 export type BouncerProps = {
   ctx: DataFunctionArgs
@@ -45,7 +46,7 @@ const run_bouncer = async <Schema, Bouncer>({
 }: {
   ctx: DataFunctionArgs
   bouncer: NarrowBouncer<Bouncer>
-} & ResolvedPromise<typeof parse_input<Schema>>) => {
+} & FromPromise<typeof parse_input<Schema>>) => {
   const session = await bouncer({
     ctx,
     csrf_token,
@@ -75,7 +76,7 @@ export const data_function_helper = async <
   ctx: DataFunctionArgs
   input_schema: BroadZodSchema<any, ZodObjectOutput>
   callback: (
-    props: ResolvedPromise<typeof run_bouncer<ZodObjectOutput, Bouncer>>
+    props: FromPromise<typeof run_bouncer<ZodObjectOutput, Bouncer>>
   ) => Promise<CallbackRes>
   bouncer: BroadBouncer<Bouncer>
   headers?: Headers
@@ -86,7 +87,7 @@ export const data_function_helper = async <
 
   try {
     let parse_input_res:
-      | ResolvedPromise<typeof parse_input<ZodObjectOutput>>
+      | FromPromise<typeof parse_input<ZodObjectOutput>>
       | undefined
     try {
       parse_input_res = await parse_input({

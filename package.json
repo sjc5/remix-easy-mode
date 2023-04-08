@@ -1,6 +1,6 @@
 {
   "name": "remix-easy-mode",
-  "version": "0.0.21-beta.21",
+  "version": "0.0.21-beta.23",
   "author": {
     "name": "Sam Cook",
     "email": "email@samcook.cc",
@@ -15,13 +15,18 @@
     "dist"
   ],
   "dependencies": {
+    "@kiruna/form-data": "0.0.0-alpha.1",
+    "@kiruna/promises": "0.0.0-alpha.1",
+    "@kiruna/zod": "0.0.0-alpha.1",
     "remix-typedjson": "^0.1.7"
   },
   "devDependencies": {
     "@changesets/cli": "^2.26.1",
+    "@remix-run/eslint-config": "^1.15.0",
     "@remix-run/node": "^1.15.0",
     "@remix-run/react": "^1.15.0",
     "@types/react": "^18.0.33",
+    "eslint": "^8.37.0",
     "react": "^18.2.0",
     "tsup": "^6.7.0",
     "typescript": "^5.0.3",

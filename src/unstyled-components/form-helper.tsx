@@ -1,5 +1,5 @@
-import { obj_from_fd } from "../common/common-helpers"
-import { FormProps } from "../hooks/use-action"
+import { obj_from_fd } from "@kiruna/form-data"
+import type { FormProps } from "../hooks/use-action"
 
 export function FormHelper<T>({
   on_submit,
