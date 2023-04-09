@@ -6,7 +6,7 @@ import type { ZodSchema, ZodType } from "zod"
 import { z } from "zod"
 import type { OnResolveProps } from "./use-on-resolve"
 import { useOnResolve } from "./use-on-resolve"
-import { get_rem_fetcher_state } from "../common/common-helpers"
+import { get_rem_fetcher_state } from "../../common/common-helpers"
 import { obj_to_fd } from "@kiruna/form-data"
 import {
   flatten_safe_parse_errors,
