@@ -22,13 +22,14 @@ export function useAction<Action extends ActionFunction, Schema>({
   path,
   input_schema,
   options,
+  serialization_handlers,
   ...initial_props
 }: {
   path: string
   input_schema: Schema extends ZodType ? Schema : null | undefined
-} & OnResolveProps<FromPromise<Action>["data"]> & {
-    options?: ClientOptions
-  }) {
+  options?: ClientOptions
+  serialization_handlers?: SerializationHandlers
+} & OnResolveProps<FromPromise<Action>["data"]>) {
   const fetcher = useFetcher<Action>()
   const { is_loading } = get_rem_fetcher_state(fetcher)
 
@@ -101,10 +102,13 @@ export function useAction<Action extends ActionFunction, Schema>({
       }
 
       fetcher.submit(
-        obj_to_fd({
-          csrf_token: props.csrf_token,
-          input: parsed_input.data,
-        }),
+        obj_to_fd(
+          {
+            csrf_token: props.csrf_token,
+            input: parsed_input.data,
+          },
+          serialization_handlers?.stringify
+        ),
         {
           method: "post",
           action: path,
@@ -124,6 +128,7 @@ export function useAction<Action extends ActionFunction, Schema>({
       set_validation_errors,
       validation_errors,
       options: options ?? {},
+      serialization_handlers,
     },
   }
 }
@@ -137,4 +142,10 @@ export type FormProps<Schema> = {
   input_schema: ZodSchema<Schema> | null | undefined
   validation_errors: FlattenedSafeParseErrors<Schema> | undefined
   options: ClientOptions
+  serialization_handlers?: SerializationHandlers
+}
+
+export type SerializationHandlers = {
+  stringify: (input: unknown) => string
+  parse: (input: string) => unknown
 }

@@ -7,7 +7,6 @@ export function InputHelper<T>({
   form_props,
   value,
   styles,
-  stringify_fn,
   ...props
 }: InputHelperProps<T>) {
   const [value_state, set_value_state] = useState(
@@ -24,10 +23,10 @@ export function InputHelper<T>({
     const to_be_stringified =
       props.type === "checkbox" ? ref.current?.checked ?? false : value_state
 
-    return stringify_fn
-      ? stringify_fn(to_be_stringified)
+    return form_props.serialization_handlers?.stringify
+      ? form_props.serialization_handlers?.stringify(to_be_stringified)
       : JSON.stringify(to_be_stringified)
-  }, [stringify_fn, value_state, props.type])
+  }, [form_props.serialization_handlers?.stringify, value_state, props.type])
 
   const ref = useRef<HTMLInputElement>(null)
 
@@ -62,7 +61,6 @@ export function TextAreaHelper<T>({
   form_props,
   value,
   styles,
-  stringify_fn,
   ...props
 }: TextAreaHelperProps<T>) {
   const [value_state, set_value_state] = useState(props.defaultValue ?? "")
@@ -72,10 +70,10 @@ export function TextAreaHelper<T>({
   )
 
   const input_value = useMemo(() => {
-    return stringify_fn
-      ? stringify_fn(value_state)
+    return form_props.serialization_handlers?.stringify
+      ? form_props.serialization_handlers?.stringify(value_state)
       : JSON.stringify(value_state)
-  }, [stringify_fn, value_state])
+  }, [form_props.serialization_handlers?.stringify, value_state])
 
   return (
     <div>

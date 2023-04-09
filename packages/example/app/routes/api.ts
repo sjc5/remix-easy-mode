@@ -2,6 +2,7 @@ import type { DataFunctionArgs } from "@remix-run/node"
 import { z } from "zod"
 import { data_function_helper, useAction } from "../../../../index"
 import { bouncer } from "../bouncer"
+import { stringify, parse } from "superjson"
 
 export const REQUIRED_INPUT_STRING = "hello world"
 
@@ -10,6 +11,11 @@ const input_schema = z.object({
     message: `Oops, you weren't supposed to write that!`,
   }),
 })
+
+const serialization_handlers = {
+  stringify,
+  parse,
+}
 
 export const action = (ctx: DataFunctionArgs) => {
   return data_function_helper({
@@ -27,6 +33,7 @@ export const action = (ctx: DataFunctionArgs) => {
         at: new Date(),
       }
     },
+    serialization_handlers,
   })
 }
 
@@ -46,5 +53,6 @@ export const useExampleHook = () => {
     options: {
       // skip_client_validation: true,
     },
+    serialization_handlers,
   })
 }

@@ -4,6 +4,7 @@ import { handle_api_error, handle_api_success } from "./api-responses.server"
 import type { ZodObject, ZodRawShape, ZodSchema } from "zod"
 import { z } from "zod"
 import type { FromPromise } from "@kiruna/promises"
+import { SerializationHandlers } from "../hooks/core/use-action"
 
 export type BouncerProps = {
   ctx: DataFunctionArgs
@@ -26,11 +27,13 @@ type BroadZodSchema<
 const parse_input = async <Schema>({
   ctx,
   input_schema,
+  parse_fn,
 }: {
   ctx: DataFunctionArgs
   input_schema: ZodSchema<Schema>
+  parse_fn: ((input: string) => unknown) | undefined
 }) => {
-  const fd = await obj_from_ctx(ctx)
+  const fd = await obj_from_ctx(ctx, parse_fn)
 
   return {
     parsed_input: input_schema.parse(fd.input),
@@ -72,6 +75,7 @@ export const data_function_helper = async <
   bouncer,
   headers,
   options,
+  serialization_handlers,
 }: {
   ctx: DataFunctionArgs
   input_schema: BroadZodSchema<any, ZodObjectOutput>
@@ -81,6 +85,7 @@ export const data_function_helper = async <
   bouncer: BroadBouncer<Bouncer>
   headers?: Headers
   options?: DataFunctionHelperOptions
+  serialization_handlers?: SerializationHandlers
 }) => {
   const send_raw_errors = options?.send_raw_errors ?? false
   const throw_on_error = options?.throw_on_error ?? false
@@ -93,8 +98,8 @@ export const data_function_helper = async <
       parse_input_res = await parse_input({
         ctx,
         input_schema:
-          input_schema ??
-          (z.undefined() as unknown as ZodSchema<ZodObjectOutput>),
+          input_schema ?? (z.any() as unknown as ZodSchema<ZodObjectOutput>),
+        parse_fn: serialization_handlers?.parse,
       })
     } catch (thrown_res) {
       if (thrown_res instanceof Error) {

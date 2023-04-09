@@ -1,6 +1,6 @@
 {
   "name": "remix-easy-mode",
-  "version": "0.0.21-beta.27",
+  "version": "0.0.21-beta.30",
   "author": {
     "name": "Sam Cook",
     "email": "email@samcook.cc",
@@ -15,9 +15,9 @@
     "dist"
   ],
   "dependencies": {
-    "@kiruna/form-data": "0.0.0-alpha.1",
-    "@kiruna/promises": "0.0.0-alpha.1",
-    "@kiruna/zod": "0.0.0-alpha.3",
+    "@kiruna/form-data": "0.0.0-alpha.6",
+    "@kiruna/promises": "0.0.0-alpha.6",
+    "@kiruna/zod": "0.0.0-alpha.6",
     "just-debounce-it": "^3.2.0"
   },
   "devDependencies": {
@@ -40,8 +40,8 @@
   },
   "scripts": {
     "build": "tsup index.ts --format cjs,esm --dts",
-    "release": "pnpm run build && changeset publish",
     "lint": "tsc",
+    "release": "pnpm run build && changeset publish",
     "publish-beta": "npm publish --tag beta"
   },
   "repository": {

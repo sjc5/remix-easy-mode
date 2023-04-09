@@ -21,7 +21,10 @@ export function FormHelper<T>({
         e.preventDefault()
 
         const fd = new FormData(e.target as HTMLFormElement)
-        const input = obj_from_fd(fd) as T
+        const input = obj_from_fd(
+          fd,
+          form_props.serialization_handlers?.parse
+        ) as T
 
         on_submit({
           input,
