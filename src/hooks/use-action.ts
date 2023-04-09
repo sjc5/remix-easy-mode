@@ -8,7 +8,10 @@ import type { OnResolveProps } from "./use-on-resolve"
 import { useOnResolve } from "./use-on-resolve"
 import { get_rem_fetcher_state } from "../common/common-helpers"
 import { obj_to_fd } from "@kiruna/form-data"
-import { flatten_safe_parse_errors } from "@kiruna/zod"
+import {
+  flatten_safe_parse_errors,
+  FlattenedSafeParseErrors,
+} from "@kiruna/zod"
 import type { FromPromise } from "@kiruna/promises"
 
 export type ClientOptions = {
@@ -125,15 +128,13 @@ export function useAction<Action extends ActionFunction, Schema>({
   }
 }
 
-type SetValidationErrorsType<T> = React.Dispatch<
-  React.SetStateAction<{ [P in keyof T]?: string[] | undefined } | undefined>
+type SetValidationErrorsType<Schema> = React.Dispatch<
+  React.SetStateAction<FlattenedSafeParseErrors<Schema> | undefined>
 >
-
-type ValidationErrors<T> = { [P in keyof T]?: string[] | undefined } | undefined
 
 export type FormProps<Schema> = {
   set_validation_errors: SetValidationErrorsType<Schema>
   input_schema: ZodSchema<Schema> | null | undefined
-  validation_errors: ValidationErrors<Schema>
+  validation_errors: FlattenedSafeParseErrors<Schema> | undefined
   options: ClientOptions
 }

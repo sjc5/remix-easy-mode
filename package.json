@@ -1,13 +1,13 @@
 {
   "name": "remix-easy-mode",
-  "version": "0.0.21-beta.23",
+  "version": "0.0.21-beta.24",
   "author": {
     "name": "Sam Cook",
     "email": "email@samcook.cc",
     "url": "https://samcook.cc"
   },
   "license": "MIT",
-  "description": "Opinionated toolkit for developing highly interactive, typesafe Remix apps. Built with zod, and inspired by the TRPC / React Query DX. Provides automatic client and server-side form validations, typesafe form input fields, automatic error handling and easy-to-display error messages, typesafe session middleware support, typesafe session and input values in server-side functions, extended json serialization, and typesafe form input values and fetcher responses in client-side hooks and components.",
+  "description": "Opinionated toolkit for developing highly interactive, typesafe Remix apps. Built with zod, and inspired by the TRPC / React Query DX. Provides automatic client and server-side form validations, typesafe form input fields, automatic error handling and easy-to-display error messages, typesafe session middleware support, typesafe session and input values in server-side functions, and typesafe form input values and fetcher responses in client-side hooks and components.",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
@@ -17,18 +17,19 @@
   "dependencies": {
     "@kiruna/form-data": "0.0.0-alpha.1",
     "@kiruna/promises": "0.0.0-alpha.1",
-    "@kiruna/zod": "0.0.0-alpha.1",
+    "@kiruna/zod": "0.0.0-alpha.3",
     "remix-typedjson": "^0.1.7"
   },
   "devDependencies": {
     "@changesets/cli": "^2.26.1",
     "@remix-run/eslint-config": "^1.15.0",
     "@remix-run/react": "^1.15.0",
+    "@remix-run/server-runtime": "^1.15.0",
     "@types/react": "^18.0.33",
-    "eslint": "^8.37.0",
+    "eslint": "^8.38.0",
     "react": "^18.2.0",
     "tsup": "^6.7.0",
-    "typescript": "^5.0.3",
+    "typescript": "^5.0.4",
     "zod": "^3.21.4"
   },
   "peerDependencies": {
@@ -69,7 +70,6 @@
     "session",
     "middleware",
     "zod",
-    "json serialization",
     "libary",
     "framework"
   ],

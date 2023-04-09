@@ -24,7 +24,7 @@ npm i remix-easy-mode zod
 Example resource route:
 
 ```tsx
-import type { DataFunctionArgs } from "@remix-run/<your-server-runtime>"
+import type { DataFunctionArgs } from "@remix-run/server-runtime"
 import { data_function_helper, useAction } from "remix-easy-mode"
 import { z } from "zod"
 
@@ -111,6 +111,6 @@ MIT
 ## Caveats
 
 - This is a work in progress. It's not yet battle-tested, and the API may change without notice. If you want to use this in production, set your dependency to a specific version.
-- This toolkit is really simple and really opinionated. It's not for everyone, and that's OK.
+- This toolkit is really simple and opinionated. It's not for everyone, and that's OK.
 - If you know of smarter ways to do these things without massively overcomplicating the mental model, please let me know!
 - Yep, snake case. You won't talk me out of it.
