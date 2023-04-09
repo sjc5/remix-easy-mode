@@ -16,9 +16,6 @@ importers:
       just-debounce-it:
         specifier: ^3.2.0
         version: 3.2.0
-      remix-typedjson:
-        specifier: ^0.1.7
-        version: 0.1.7(@remix-run/react@1.15.0)(@remix-run/server-runtime@1.15.0)(react@18.2.0)
     devDependencies:
       '@changesets/cli':
         specifier: ^2.26.1
@@ -7567,18 +7564,6 @@ packages:
       mdast-util-to-hast: 11.3.0
       unified: 10.1.2
     dev: true
-
-  /remix-typedjson@0.1.7(@remix-run/react@1.15.0)(@remix-run/server-runtime@1.15.0)(react@18.2.0):
-    resolution: {integrity: sha512-h7WoKbKBGsVdZZp3s79U5SDrMvQ3We7BjGaSIPxchnJOTS3GUDat0kBoy/gh9TVKRf5KYCee+K1UlFAYQmLQsA==}
-    peerDependencies:
-      '@remix-run/react': ^1.6.5
-      '@remix-run/server-runtime': ^1.6.5
-      react: ^17.0.2 || ^18.0.0
-    dependencies:
-      '@remix-run/react': 1.15.0(react-dom@18.2.0)(react@18.2.0)
-      '@remix-run/server-runtime': 1.15.0
-      react: 18.2.0
-    dev: false
 
   /require-directory@2.1.1:
     resolution: {integrity: sha512-fGxEI7+wsG9xrvdjsrlmL22OMTTiHRwAMroiEeMgq8gzoLC/PQr7RsRDSTLUg/bZAZtF+TVIkHc6/4RIKrui+Q==}
