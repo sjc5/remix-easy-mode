@@ -4,7 +4,7 @@ import { handle_api_error, handle_api_success } from "./api-responses.server"
 import type { ZodObject, ZodRawShape, ZodSchema } from "zod"
 import { z } from "zod"
 import type { FromPromise } from "@kiruna/promises"
-import { SerializationHandlers } from "../hooks/core/use-action"
+import { SerializationHandlers } from "../hooks/use-action"
 
 export type BouncerProps = {
   ctx: DataFunctionArgs

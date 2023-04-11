@@ -1,5 +1,5 @@
 import { useMemo, useRef, useState } from "react"
-import type { FormProps } from "../hooks/core/use-action"
+import type { FormProps } from "../hooks/use-action"
 
 export function InputHelper<T>({
   label,

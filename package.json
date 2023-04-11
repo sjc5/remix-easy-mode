@@ -1,6 +1,6 @@
 {
   "name": "remix-easy-mode",
-  "version": "0.0.21-beta.30",
+  "version": "0.0.21-beta.31",
   "author": {
     "name": "Sam Cook",
     "email": "email@samcook.cc",
@@ -15,10 +15,9 @@
     "dist"
   ],
   "dependencies": {
-    "@kiruna/form-data": "0.0.0-alpha.6",
-    "@kiruna/promises": "0.0.0-alpha.6",
-    "@kiruna/zod": "0.0.0-alpha.6",
-    "just-debounce-it": "^3.2.0"
+    "@kiruna/form-data": "0.0.0-alpha.7",
+    "@kiruna/promises": "0.0.0-alpha.7",
+    "@kiruna/zod": "0.0.0-alpha.7"
   },
   "devDependencies": {
     "@changesets/cli": "^2.26.1",

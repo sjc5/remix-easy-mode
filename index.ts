@@ -2,13 +2,8 @@
 export * from "./src/common/common-helpers"
 
 // hooks – core
-export * from "./src/hooks/core/use-action"
-export * from "./src/hooks/core/use-on-resolve"
-
-// hooks – extended
-export * from "./src/hooks/extended/use-global-is-loading"
-export * from "./src/hooks/extended/use-revalidate-on-focus"
-export * from "./src/hooks/extended/use-route-data"
+export * from "./src/hooks/use-action"
+export * from "./src/hooks/use-on-resolve"
 
 // server
 export * from "./src/server/api-responses.server"

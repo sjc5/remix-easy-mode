@@ -5,17 +5,14 @@ importers:
   .:
     dependencies:
       '@kiruna/form-data':
-        specifier: 0.0.0-alpha.6
-        version: 0.0.0-alpha.6
+        specifier: 0.0.0-alpha.7
+        version: 0.0.0-alpha.7
       '@kiruna/promises':
-        specifier: 0.0.0-alpha.6
-        version: 0.0.0-alpha.6
+        specifier: 0.0.0-alpha.7
+        version: 0.0.0-alpha.7
       '@kiruna/zod':
-        specifier: 0.0.0-alpha.6
-        version: 0.0.0-alpha.6(zod@3.21.4)
-      just-debounce-it:
-        specifier: ^3.2.0
-        version: 3.2.0
+        specifier: 0.0.0-alpha.7
+        version: 0.0.0-alpha.7(zod@3.21.4)
     devDependencies:
       '@changesets/cli':
         specifier: ^2.26.1
@@ -1372,10 +1369,6 @@ packages:
       to-fast-properties: 2.0.0
     dev: true
 
-  /@braintree/sanitize-url@6.0.2:
-    resolution: {integrity: sha512-Tbsj02wXCbqGmzdnXNk0SOF19ChhRU70BsroIi4Pm6Ehp56in6vch94mfbdQ17DozxkL3BAVjbZ4Qc1a0HFRAg==}
-    dev: false
-
   /@changesets/apply-release-plan@6.1.3:
     resolution: {integrity: sha512-ECDNeoc3nfeAe1jqJb5aFQX7CqzQhD2klXRez2JDb/aVpGUbX673HgKrnrgJRuQR/9f2TtLoYIzrGB9qwD77mg==}
     dependencies:
@@ -2279,30 +2272,19 @@ packages:
       '@jridgewell/sourcemap-codec': 1.4.14
     dev: true
 
-  /@kiruna/constants@0.0.0-alpha.6:
-    resolution: {integrity: sha512-4rOUh01hUMda2Dvf4zdUcv0eZOTjru1oqMtZQWiRDeTGukyG2KT6cRwdKa7YIKRFonRkPnYrbeHzYENtw/i7Lw==}
+  /@kiruna/form-data@0.0.0-alpha.7:
+    resolution: {integrity: sha512-gUpVNbj9MhnjA1gYLI8I4Km2yzs5JC5O0mPDEpJTM5J8Ugxr8B7PJSvBAbuMFNFWn7IlNI3Z5RiEUELIAkmVYw==}
     dev: false
 
-  /@kiruna/form-data@0.0.0-alpha.6:
-    resolution: {integrity: sha512-htNHqdE+GzKXpdn7FL82OSdn1NwTq4Dm5GEOvMRqrdGzwHkNe4XnczE1j2reC6Y9iAON/X5MsHqqDVrt+AE2TA==}
+  /@kiruna/promises@0.0.0-alpha.7:
+    resolution: {integrity: sha512-6fAHkIB6wNrNqCzO5V54Dp2SEnQBhssvTolP4mi1CHUCNSgXLwr/ZvEeMjGLHpyl0xPBCmpOcbDHwNirMbP+1Q==}
     dev: false
 
-  /@kiruna/promises@0.0.0-alpha.6:
-    resolution: {integrity: sha512-IiMx/5d+DQolLvIakbCMcNTZxo88TYLgJnxljtwq2oEW+lk90kvD1259HdlU7Ws1sZsrvtJF1Y1Qk7iYr8qd+Q==}
-    dev: false
-
-  /@kiruna/style@0.0.0-alpha.6:
-    resolution: {integrity: sha512-vWjJvbger3uAj5SsOqJJenUDOf12ljS9pb8okSPaKIlYlqI8uf/jqo06imyrYgoKyg5a2rd+fIKkjNYog1Mz0w==}
-    dev: false
-
-  /@kiruna/zod@0.0.0-alpha.6(zod@3.21.4):
-    resolution: {integrity: sha512-lH0jjTmdbqhMpEkI2dvPJBVv/kLWvsUwQj3/yhLTvWUbf1IL2yf4Y6bNlOc7i9QwKhzB2QVVB7Ox7Jz8BdaqtQ==}
+  /@kiruna/zod@0.0.0-alpha.7(zod@3.21.4):
+    resolution: {integrity: sha512-45+dESMjMeYaNFUfjcXTUHAkBHl3n3bGuIgqjtAh+IL+lRlQikL75qBvMXbBBrMvGAqH6GC7wfKcrgu0zPlUag==}
     peerDependencies:
       zod: ^3.21.4
     dependencies:
-      '@braintree/sanitize-url': 6.0.2
-      '@kiruna/constants': 0.0.0-alpha.6
-      '@kiruna/style': 0.0.0-alpha.6
       zod: 3.21.4
     dev: false
 
@@ -5824,10 +5806,6 @@ packages:
       array-includes: 3.1.6
       object.assign: 4.1.4
     dev: true
-
-  /just-debounce-it@3.2.0:
-    resolution: {integrity: sha512-WXzwLL0745uNuedrCsCs3rpmfD6DBaf7uuVwaq98/8dafURfgQaBsSpjiPp5+CW6Vjltwy9cOGI6qE71b3T8iQ==}
-    dev: false
 
   /keyv@4.5.2:
     resolution: {integrity: sha512-5MHbFaKn8cNSmVW7BYnijeAVlE4cYA/SVkifVgrh7yotnfhKmjuXpDKjrABLnT0SfHWV21P8ow07OGfRrNDg8g==}

@@ -3,8 +3,8 @@ import { useEffect } from "react"
 import type {
   handle_api_error,
   handle_api_success,
-} from "../../server/api-responses.server"
-import { get_rem_fetcher_state } from "../../common/common-helpers"
+} from "../server/api-responses.server"
+import { get_rem_fetcher_state } from "../common/common-helpers"
 import type { FromPromise } from "@kiruna/promises"
 
 export const useOnResolve = <Data>({
