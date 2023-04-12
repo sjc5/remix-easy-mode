@@ -2,7 +2,7 @@ import type { FetcherWithComponents } from "@remix-run/react"
 import { useFetcher } from "@remix-run/react"
 import type { ActionFunction } from "@remix-run/server-runtime"
 import { useState, useCallback } from "react"
-import type { ZodObject, ZodRawShape, ZodSchema } from "zod"
+import type { ZodObject, ZodRawShape, ZodSchema, ZodUnion } from "zod"
 import { z } from "zod"
 import type { OnResolveProps } from "./use-on-resolve"
 import { useOnResolve } from "./use-on-resolve"
@@ -142,7 +142,9 @@ type SetValidationErrorsType<Schema extends ZodSchema> = React.Dispatch<
 
 export type FormProps<
   RawShape extends ZodRawShape,
-  Inferred extends ZodObject<RawShape>["_output"]
+  Inferred extends
+    | ZodObject<RawShape>["_output"]
+    | ZodUnion<[ZodObject<RawShape>]>["_output"]
 > = {
   set_validation_errors: SetValidationErrorsType<ZodSchema<Inferred>>
   input_schema: ZodSchema<Inferred> | null | undefined

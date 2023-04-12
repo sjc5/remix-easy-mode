@@ -1,10 +1,12 @@
 import { useMemo, useRef, useState } from "react"
 import type { FormProps } from "../hooks/use-action"
-import { ZodObject, ZodRawShape, z } from "zod"
+import { ZodObject, ZodRawShape, ZodUnion, z } from "zod"
 
 export function InputHelper<
   RawShape extends ZodRawShape,
-  Inferred extends ZodObject<RawShape>["_output"],
+  Inferred extends
+    | ZodObject<RawShape>["_output"]
+    | ZodUnion<[ZodObject<RawShape>]>["_output"],
   InputName extends keyof Inferred
 >({
   label,
@@ -62,7 +64,9 @@ export function InputHelper<
 
 export function TextAreaHelper<
   RawShape extends ZodRawShape,
-  Inferred extends ZodObject<RawShape>["_output"],
+  Inferred extends
+    | ZodObject<RawShape>["_output"]
+    | ZodUnion<[ZodObject<RawShape>]>["_output"],
   InputName extends keyof Inferred
 >({
   label,
@@ -146,15 +150,11 @@ export type TextAreaStyles = InputStylesBase & {
   text_area?: string
 }
 
-const input_schema = z.object({
-  bob: z.literal("hope"),
-})
-
-type test = z.infer<typeof input_schema>[keyof z.infer<typeof input_schema>]
-
 export type InputHelperBaseProps<
   RawShape extends ZodRawShape,
-  Inferred extends ZodObject<RawShape>["_output"],
+  Inferred extends
+    | ZodObject<RawShape>["_output"]
+    | ZodUnion<[ZodObject<RawShape>]>["_output"],
   InputName extends keyof Inferred
 > = {
   label: string
@@ -167,7 +167,9 @@ export type InputHelperBaseProps<
 
 export type InputHelperProps<
   RawShape extends ZodRawShape,
-  Inferred extends ZodObject<RawShape>["_output"],
+  Inferred extends
+    | ZodObject<RawShape>["_output"]
+    | ZodUnion<[ZodObject<RawShape>]>["_output"],
   InputName extends keyof Inferred
 > = InputHelperBaseProps<RawShape, Inferred, InputName> & {
   styles?: InputStyles
@@ -175,7 +177,9 @@ export type InputHelperProps<
 
 export type TextAreaHelperProps<
   RawShape extends ZodRawShape,
-  Inferred extends ZodObject<RawShape>["_output"],
+  Inferred extends
+    | ZodObject<RawShape>["_output"]
+    | ZodUnion<[ZodObject<RawShape>]>["_output"],
   InputName extends keyof Inferred
 > = InputHelperBaseProps<RawShape, Inferred, InputName> & {
   styles?: TextAreaStyles
@@ -186,7 +190,9 @@ export type TextAreaHelperProps<
 
 export function RadioInputHelper<
   RawShape extends ZodRawShape,
-  Inferred extends ZodObject<RawShape>["_output"],
+  Inferred extends
+    | ZodObject<RawShape>["_output"]
+    | ZodUnion<[ZodObject<RawShape>]>["_output"],
   InputName extends keyof Inferred
 >({
   label,
@@ -216,7 +222,9 @@ type RadioInputItem<T> = [string, T, boolean?]
 
 export function RadioGroupHelper<
   RawShape extends ZodRawShape,
-  Inferred extends ZodObject<RawShape>["_output"],
+  Inferred extends
+    | ZodObject<RawShape>["_output"]
+    | ZodUnion<[ZodObject<RawShape>]>["_output"],
   InputName extends keyof Inferred
 >({
   name,

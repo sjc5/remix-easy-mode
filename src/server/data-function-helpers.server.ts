@@ -1,7 +1,7 @@
 import type { DataFunctionArgs } from "@remix-run/server-runtime"
 import { obj_from_ctx } from "./helpers.server"
 import { handle_api_error, handle_api_success } from "./api-responses.server"
-import type { ZodObject, ZodRawShape, ZodSchema } from "zod"
+import type { ZodObject, ZodRawShape, ZodSchema, ZodUnion } from "zod"
 import { z } from "zod"
 import type { FromPromise } from "@kiruna/promises"
 import { SerializationHandlers } from "../hooks/use-action"
@@ -54,7 +54,9 @@ type DataFunctionHelperOptions = {
 }
 
 export const data_function_helper = async <
-  Inferred extends ZodObject<RawShape>["_output"],
+  Inferred extends
+    | ZodObject<RawShape>["_output"]
+    | ZodUnion<[ZodObject<RawShape>]>["_output"],
   CallbackRes,
   Bouncer,
   RawShape extends ZodRawShape
