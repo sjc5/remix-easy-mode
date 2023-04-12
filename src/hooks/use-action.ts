@@ -2,12 +2,7 @@ import type { FetcherWithComponents } from "@remix-run/react"
 import { useFetcher } from "@remix-run/react"
 import type { ActionFunction } from "@remix-run/server-runtime"
 import { useState, useCallback } from "react"
-import type {
-  ZodDiscriminatedUnion,
-  ZodObject,
-  ZodRawShape,
-  ZodSchema,
-} from "zod"
+import type { ZodSchema } from "zod"
 import { z } from "zod"
 import type { OnResolveProps } from "./use-on-resolve"
 import { useOnResolve } from "./use-on-resolve"
@@ -18,6 +13,7 @@ import {
   FlattenedSafeParseErrors,
 } from "@kiruna/zod"
 import type { FromPromise } from "@kiruna/promises"
+import { Inferred, NarrowedForForm } from "../unstyled-components/input-helper"
 
 export type ClientOptions = {
   skip_client_validation?: boolean
@@ -145,15 +141,12 @@ type SetValidationErrorsType<Schema extends ZodSchema> = React.Dispatch<
   React.SetStateAction<FlattenedSafeParseErrors<Schema> | undefined>
 >
 
-export type FormProps<
-  RawShape extends ZodRawShape,
-  Inferred extends
-    | ZodObject<RawShape>["_output"]
-    | ZodDiscriminatedUnion<string, [ZodObject<RawShape>]>["_output"]
-> = {
-  set_validation_errors: SetValidationErrorsType<ZodSchema<Inferred>>
-  input_schema: ZodSchema<Inferred> | null | undefined
-  validation_errors: FlattenedSafeParseErrors<ZodSchema<Inferred>> | undefined
+export type FormProps<T> = {
+  set_validation_errors: SetValidationErrorsType<ZodSchema<Inferred<T>>>
+  input_schema: T extends NarrowedForForm<T> ? T : never | null | undefined
+  validation_errors:
+    | FlattenedSafeParseErrors<ZodSchema<Inferred<T>>>
+    | undefined
   options: ClientOptions
   serialization_handlers?: SerializationHandlers
 }

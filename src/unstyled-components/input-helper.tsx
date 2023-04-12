@@ -1,21 +1,15 @@
 import { useMemo, useRef, useState } from "react"
 import type { FormProps } from "../hooks/use-action"
-import { ZodObject, ZodRawShape, ZodDiscriminatedUnion } from "zod"
+import { ZodDiscriminatedUnion, ZodObject, ZodRawShape, z } from "zod"
 
-export function InputHelper<
-  RawShape extends ZodRawShape,
-  Inferred extends
-    | ZodObject<RawShape>["_output"]
-    | ZodDiscriminatedUnion<string, [ZodObject<RawShape>]>["_output"],
-  InputName extends keyof Inferred
->({
+export function InputHelper<T, N extends keyof Inferred<T>>({
   label,
   name,
   form_props,
   value,
   styles,
   ...props
-}: InputHelperProps<RawShape, Inferred, InputName>) {
+}: InputHelperProps<T, N>) {
   const [value_state, set_value_state] = useState(
     props.type === "checkbox"
       ? props.defaultChecked ?? false
@@ -62,20 +56,14 @@ export function InputHelper<
   )
 }
 
-export function TextAreaHelper<
-  RawShape extends ZodRawShape,
-  Inferred extends
-    | ZodObject<RawShape>["_output"]
-    | ZodDiscriminatedUnion<string, [ZodObject<RawShape>]>["_output"],
-  InputName extends keyof Inferred
->({
+export function TextAreaHelper<T, N extends keyof Inferred<T>>({
   label,
   name,
   form_props,
   value,
   styles,
   ...props
-}: TextAreaHelperProps<RawShape, Inferred, InputName>) {
+}: TextAreaHelperProps<T, N>) {
   const [value_state, set_value_state] = useState(props.defaultValue ?? "")
 
   const errors = form_props.validation_errors?.[name]?.map(
@@ -150,56 +138,48 @@ export type TextAreaStyles = InputStylesBase & {
   text_area?: string
 }
 
-export type InputHelperBaseProps<
-  RawShape extends ZodRawShape,
-  Inferred extends
-    | ZodObject<RawShape>["_output"]
-    | ZodDiscriminatedUnion<string, [ZodObject<RawShape>]>["_output"],
-  InputName extends keyof Inferred
-> = {
+export type ObjectOrDiscriminatedUnionFromRawShape<RS extends ZodRawShape> =
+  | ZodObject<RS>
+  | ZodDiscriminatedUnion<string, [ZodObject<RS>]>
+
+export type NarrowedForForm<T> = T extends ZodObject<infer RS>
+  ? ObjectOrDiscriminatedUnionFromRawShape<RS>
+  : never
+
+export type Inferred<T> = NarrowedForForm<T>["_output"]
+
+export type InputHelperBaseProps<T, N extends keyof Inferred<T>> = {
   label: string
-  name: InputName
-  form_props: FormProps<RawShape, Inferred>
-  value?: Inferred[InputName]
-  defaultValue?: Inferred[InputName]
+  name: N
+  form_props: FormProps<T>
+  value?: Inferred<T>[N]
+  defaultValue?: Inferred<T>[N]
   stringify_fn?: (data: any) => string
 }
 
 export type InputHelperProps<
-  RawShape extends ZodRawShape,
-  Inferred extends
-    | ZodObject<RawShape>["_output"]
-    | ZodDiscriminatedUnion<string, [ZodObject<RawShape>]>["_output"],
-  InputName extends keyof Inferred
-> = InputHelperBaseProps<RawShape, Inferred, InputName> & {
+  T,
+  N extends keyof Inferred<T>
+> = InputHelperBaseProps<T, N> & {
   styles?: InputStyles
 } & Omit<React.InputHTMLAttributes<HTMLInputElement>, "value" | "defaultValue">
 
 export type TextAreaHelperProps<
-  RawShape extends ZodRawShape,
-  Inferred extends
-    | ZodObject<RawShape>["_output"]
-    | ZodDiscriminatedUnion<string, [ZodObject<RawShape>]>["_output"],
-  InputName extends keyof Inferred
-> = InputHelperBaseProps<RawShape, Inferred, InputName> & {
+  T,
+  N extends keyof Inferred<T>
+> = InputHelperBaseProps<T, N> & {
   styles?: TextAreaStyles
 } & Omit<
     React.TextareaHTMLAttributes<HTMLTextAreaElement>,
     "value" | "defaultValue"
   >
 
-export function RadioInputHelper<
-  RawShape extends ZodRawShape,
-  Inferred extends
-    | ZodObject<RawShape>["_output"]
-    | ZodDiscriminatedUnion<string, [ZodObject<RawShape>]>["_output"],
-  InputName extends keyof Inferred
->({
+export function RadioInputHelper<T, N extends keyof Inferred<T>>({
   label,
   form_props,
   styles,
   ...props
-}: InputHelperProps<RawShape, Inferred, InputName>) {
+}: InputHelperProps<T, N>) {
   return (
     <div>
       <label className={styles?.label_wrapper}>
@@ -220,21 +200,15 @@ export function RadioInputHelper<
 
 type RadioInputItem<T> = [string, T, boolean?]
 
-export function RadioGroupHelper<
-  RawShape extends ZodRawShape,
-  Inferred extends
-    | ZodObject<RawShape>["_output"]
-    | ZodDiscriminatedUnion<string, [ZodObject<RawShape>]>["_output"],
-  InputName extends keyof Inferred
->({
+export function RadioGroupHelper<T, N extends keyof Inferred<T>>({
   name,
   form_props,
   styles,
   items,
   ...props
 }: {
-  items: RadioInputItem<Inferred[InputName]>[]
-} & Omit<InputHelperProps<RawShape, Inferred, InputName>, "label">) {
+  items: RadioInputItem<Inferred<T>[N]>[]
+} & Omit<InputHelperProps<T, N>, "label">) {
   return (
     <div>
       {items.map((item) => {
