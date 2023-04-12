@@ -29,7 +29,7 @@ export function useAction<
   ...initial_props
 }: {
   path: string
-  input_schema: InputSchema
+  input_schema: InputSchema | null | undefined
   options?: ClientOptions
   serialization_handlers?: SerializationHandlers
 } & OnResolveProps<FromPromise<Action>["data"]>) {
