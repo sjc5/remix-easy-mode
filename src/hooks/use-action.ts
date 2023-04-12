@@ -2,7 +2,7 @@ import type { FetcherWithComponents } from "@remix-run/react"
 import { useFetcher } from "@remix-run/react"
 import type { ActionFunction } from "@remix-run/server-runtime"
 import { useState, useCallback } from "react"
-import type { ZodSchema, ZodType } from "zod"
+import type { ZodObject, ZodRawShape, ZodSchema } from "zod"
 import { z } from "zod"
 import type { OnResolveProps } from "./use-on-resolve"
 import { useOnResolve } from "./use-on-resolve"
@@ -18,7 +18,10 @@ export type ClientOptions = {
   skip_client_validation?: boolean
 }
 
-export function useAction<Action extends ActionFunction, Schema>({
+export function useAction<
+  Action extends ActionFunction,
+  InputSchema extends z.AnyZodObject
+>({
   path,
   input_schema,
   options,
@@ -26,17 +29,17 @@ export function useAction<Action extends ActionFunction, Schema>({
   ...initial_props
 }: {
   path: string
-  input_schema: Schema extends ZodType ? Schema : null | undefined
+  input_schema: InputSchema
   options?: ClientOptions
   serialization_handlers?: SerializationHandlers
 } & OnResolveProps<FromPromise<Action>["data"]>) {
   const fetcher = useFetcher<Action>()
   const { is_loading } = get_rem_fetcher_state(fetcher)
 
-  type SchemaOutput = Schema extends ZodType ? z.infer<Schema> : unknown
+  type Inferred = z.infer<InputSchema>
 
   const [validation_errors, set_validation_errors] = useState<
-    { [P in keyof SchemaOutput]?: string[] | undefined } | undefined
+    { [P in keyof Inferred]?: string[] | undefined } | undefined
   >(undefined)
 
   const [on_resolve, set_on_resolve] = useState<
@@ -54,7 +57,7 @@ export function useAction<Action extends ActionFunction, Schema>({
 
   const callback = useCallback(
     async (
-      props: { input: SchemaOutput } & OnResolveProps<Action> & {
+      props: { input: Inferred } & OnResolveProps<Action> & {
           csrf_token?: string
         } & {
           options?: ClientOptions
@@ -133,14 +136,17 @@ export function useAction<Action extends ActionFunction, Schema>({
   }
 }
 
-type SetValidationErrorsType<Schema> = React.Dispatch<
+type SetValidationErrorsType<Schema extends ZodSchema> = React.Dispatch<
   React.SetStateAction<FlattenedSafeParseErrors<Schema> | undefined>
 >
 
-export type FormProps<Schema> = {
-  set_validation_errors: SetValidationErrorsType<Schema>
-  input_schema: ZodSchema<Schema> | null | undefined
-  validation_errors: FlattenedSafeParseErrors<Schema> | undefined
+export type FormProps<
+  RawShape extends ZodRawShape,
+  Inferred extends ZodObject<RawShape>["_output"]
+> = {
+  set_validation_errors: SetValidationErrorsType<ZodSchema<Inferred>>
+  input_schema: ZodSchema<Inferred> | null | undefined
+  validation_errors: FlattenedSafeParseErrors<ZodSchema<Inferred>> | undefined
   options: ClientOptions
   serialization_handlers?: SerializationHandlers
 }

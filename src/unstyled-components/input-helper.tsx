@@ -1,14 +1,19 @@
 import { useMemo, useRef, useState } from "react"
 import type { FormProps } from "../hooks/use-action"
+import { ZodObject, ZodRawShape, z } from "zod"
 
-export function InputHelper<T>({
+export function InputHelper<
+  RawShape extends ZodRawShape,
+  Inferred extends ZodObject<RawShape>["_output"],
+  InputName extends keyof Inferred
+>({
   label,
   name,
   form_props,
   value,
   styles,
   ...props
-}: InputHelperProps<T>) {
+}: InputHelperProps<RawShape, Inferred, InputName>) {
   const [value_state, set_value_state] = useState(
     props.type === "checkbox"
       ? props.defaultChecked ?? false
@@ -55,14 +60,18 @@ export function InputHelper<T>({
   )
 }
 
-export function TextAreaHelper<T>({
+export function TextAreaHelper<
+  RawShape extends ZodRawShape,
+  Inferred extends ZodObject<RawShape>["_output"],
+  InputName extends keyof Inferred
+>({
   label,
   name,
   form_props,
   value,
   styles,
   ...props
-}: TextAreaHelperProps<T>) {
+}: TextAreaHelperProps<RawShape, Inferred, InputName>) {
   const [value_state, set_value_state] = useState(props.defaultValue ?? "")
 
   const errors = form_props.validation_errors?.[name]?.map(
@@ -137,18 +146,112 @@ export type TextAreaStyles = InputStylesBase & {
   text_area?: string
 }
 
-export type InputHelperBaseProps<T> = {
+const input_schema = z.object({
+  bob: z.literal("hope"),
+})
+
+type test = z.infer<typeof input_schema>[keyof z.infer<typeof input_schema>]
+
+export type InputHelperBaseProps<
+  RawShape extends ZodRawShape,
+  Inferred extends ZodObject<RawShape>["_output"],
+  InputName extends keyof Inferred
+> = {
   label: string
-  name: keyof T extends string ? keyof T : never
-  form_props: FormProps<T>
-  value?: T[keyof T]
+  name: InputName
+  form_props: FormProps<RawShape, Inferred>
+  value?: Inferred[InputName]
+  defaultValue?: Inferred[InputName]
   stringify_fn?: (data: any) => string
 }
 
-export type InputHelperProps<T> = InputHelperBaseProps<T> & {
+export type InputHelperProps<
+  RawShape extends ZodRawShape,
+  Inferred extends ZodObject<RawShape>["_output"],
+  InputName extends keyof Inferred
+> = InputHelperBaseProps<RawShape, Inferred, InputName> & {
   styles?: InputStyles
-} & Omit<React.InputHTMLAttributes<HTMLInputElement>, "value">
+} & Omit<React.InputHTMLAttributes<HTMLInputElement>, "value" | "defaultValue">
 
-export type TextAreaHelperProps<T> = InputHelperBaseProps<T> & {
+export type TextAreaHelperProps<
+  RawShape extends ZodRawShape,
+  Inferred extends ZodObject<RawShape>["_output"],
+  InputName extends keyof Inferred
+> = InputHelperBaseProps<RawShape, Inferred, InputName> & {
   styles?: TextAreaStyles
-} & Omit<React.TextareaHTMLAttributes<HTMLTextAreaElement>, "value">
+} & Omit<
+    React.TextareaHTMLAttributes<HTMLTextAreaElement>,
+    "value" | "defaultValue"
+  >
+
+export function RadioInputHelper<
+  RawShape extends ZodRawShape,
+  Inferred extends ZodObject<RawShape>["_output"],
+  InputName extends keyof Inferred
+>({
+  label,
+  form_props,
+  styles,
+  ...props
+}: InputHelperProps<RawShape, Inferred, InputName>) {
+  return (
+    <div>
+      <label className={styles?.label_wrapper}>
+        <span className={styles?.label_span}>{label}</span>
+
+        <input
+          {...props}
+          className={styles?.input}
+          onChange={(e) => {
+            props.onChange?.(e)
+          }}
+          type="radio"
+        />
+      </label>
+    </div>
+  )
+}
+
+type RadioInputItem<T> = [string, T, boolean?]
+
+export function RadioGroupHelper<
+  RawShape extends ZodRawShape,
+  Inferred extends ZodObject<RawShape>["_output"],
+  InputName extends keyof Inferred
+>({
+  name,
+  form_props,
+  styles,
+  items,
+  ...props
+}: {
+  items: RadioInputItem<Inferred[InputName]>[]
+} & Omit<InputHelperProps<RawShape, Inferred, InputName>, "label">) {
+  return (
+    <div>
+      {items.map((item) => {
+        const [label, value] = item
+
+        return (
+          <div key={value}>
+            <label className={styles?.label_wrapper}>
+              <span className={styles?.label_span}>{label}</span>
+
+              <input
+                {...props}
+                className={styles?.input}
+                onChange={(e) => {
+                  props.onChange?.(e)
+                }}
+                type="radio"
+                name={name}
+                value={value}
+                defaultChecked={item[2]}
+              />
+            </label>
+          </div>
+        )
+      })}
+    </div>
+  )
+}

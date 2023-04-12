@@ -14,23 +14,13 @@ export type BouncerProps = {
 type NarrowBouncer<SessionType> = (props: BouncerProps) => Promise<SessionType>
 type BroadBouncer<SessionType> = NarrowBouncer<SessionType> | null | undefined
 
-type NarrowZodSchema<
-  RawShape extends ZodRawShape,
-  Schema extends ZodObject<RawShape>["_output"]
-> = ZodSchema<Schema>
-
-type BroadZodSchema<
-  RawShape extends ZodRawShape,
-  Schema extends ZodObject<RawShape>["_output"]
-> = NarrowZodSchema<RawShape, Schema> | null | undefined
-
-const parse_input = async <Schema>({
+const parse_input = async <Inferred>({
   ctx,
   input_schema,
   parse_fn,
 }: {
   ctx: DataFunctionArgs
-  input_schema: ZodSchema<Schema>
+  input_schema: ZodSchema<Inferred>
   parse_fn: ((input: string) => unknown) | undefined
 }) => {
   const fd = await obj_from_ctx(ctx, parse_fn)
@@ -41,7 +31,7 @@ const parse_input = async <Schema>({
   }
 }
 
-const run_bouncer = async <Schema, Bouncer>({
+const run_bouncer = async <Inferred, Bouncer>({
   ctx,
   bouncer,
   csrf_token,
@@ -49,7 +39,7 @@ const run_bouncer = async <Schema, Bouncer>({
 }: {
   ctx: DataFunctionArgs
   bouncer: NarrowBouncer<Bouncer>
-} & FromPromise<typeof parse_input<Schema>>) => {
+} & FromPromise<typeof parse_input<Inferred>>) => {
   const session = await bouncer({
     ctx,
     csrf_token,
@@ -64,7 +54,7 @@ type DataFunctionHelperOptions = {
 }
 
 export const data_function_helper = async <
-  ZodObjectOutput extends ZodObject<RawShape>["_output"],
+  Inferred extends ZodObject<RawShape>["_output"],
   CallbackRes,
   Bouncer,
   RawShape extends ZodRawShape
@@ -78,9 +68,9 @@ export const data_function_helper = async <
   serialization_handlers,
 }: {
   ctx: DataFunctionArgs
-  input_schema: BroadZodSchema<any, ZodObjectOutput>
+  input_schema: ZodSchema<Inferred> | null | undefined
   callback: (
-    props: FromPromise<typeof run_bouncer<ZodObjectOutput, Bouncer>>
+    props: FromPromise<typeof run_bouncer<Inferred, Bouncer>>
   ) => Promise<CallbackRes>
   bouncer: BroadBouncer<Bouncer>
   headers?: Headers
@@ -91,14 +81,12 @@ export const data_function_helper = async <
   const throw_on_error = options?.throw_on_error ?? false
 
   try {
-    let parse_input_res:
-      | FromPromise<typeof parse_input<ZodObjectOutput>>
-      | undefined
+    let parse_input_res: FromPromise<typeof parse_input<Inferred>> | undefined
     try {
       parse_input_res = await parse_input({
         ctx,
         input_schema:
-          input_schema ?? (z.any() as unknown as ZodSchema<ZodObjectOutput>),
+          input_schema ?? (z.any() as unknown as ZodSchema<Inferred>),
         parse_fn: serialization_handlers?.parse,
       })
     } catch (thrown_res) {

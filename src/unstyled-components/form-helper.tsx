@@ -1,7 +1,11 @@
 import { obj_from_fd } from "@kiruna/form-data"
 import type { FormProps } from "../hooks/use-action"
+import { ZodObject, ZodRawShape, z } from "zod"
 
-export function FormHelper<T>({
+export function FormHelper<
+  RawShape extends ZodRawShape,
+  Inferred extends ZodObject<RawShape>["_output"]
+>({
   on_submit,
   form_props,
   ...props
@@ -10,10 +14,10 @@ export function FormHelper<T>({
     input,
     e,
   }: {
-    input: T
+    input: Inferred
     e: React.FormEvent<HTMLFormElement>
   }) => void
-  form_props: FormProps<T>
+  form_props: FormProps<RawShape, Inferred>
 } & Omit<React.FormHTMLAttributes<HTMLFormElement>, "onSubmit">) {
   return (
     <form
@@ -24,7 +28,7 @@ export function FormHelper<T>({
         const input = obj_from_fd(
           fd,
           form_props.serialization_handlers?.parse
-        ) as T
+        ) as Inferred
 
         on_submit({
           input,
