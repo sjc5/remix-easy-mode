@@ -11,8 +11,8 @@ importers:
         specifier: 0.0.0-alpha.7
         version: 0.0.0-alpha.7
       '@kiruna/zod':
-        specifier: 0.0.0-alpha.7
-        version: 0.0.0-alpha.7(zod@3.21.4)
+        specifier: 0.0.0-alpha.8
+        version: 0.0.0-alpha.8(zod@3.21.4)
     devDependencies:
       '@changesets/cli':
         specifier: ^2.26.1
@@ -2280,8 +2280,8 @@ packages:
     resolution: {integrity: sha512-6fAHkIB6wNrNqCzO5V54Dp2SEnQBhssvTolP4mi1CHUCNSgXLwr/ZvEeMjGLHpyl0xPBCmpOcbDHwNirMbP+1Q==}
     dev: false
 
-  /@kiruna/zod@0.0.0-alpha.7(zod@3.21.4):
-    resolution: {integrity: sha512-45+dESMjMeYaNFUfjcXTUHAkBHl3n3bGuIgqjtAh+IL+lRlQikL75qBvMXbBBrMvGAqH6GC7wfKcrgu0zPlUag==}
+  /@kiruna/zod@0.0.0-alpha.8(zod@3.21.4):
+    resolution: {integrity: sha512-8CJdhRRLX/2U2839CpXQ6CEBSSU2dBwLuAQcg99ijh0QTgyVr/aSUn/IGWryL1Xs0SU3ZJ5gVwG35+r+QbfV3Q==}
     peerDependencies:
       zod: ^3.21.4
     dependencies:
