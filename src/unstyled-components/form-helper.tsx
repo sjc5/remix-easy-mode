@@ -1,12 +1,12 @@
 import { obj_from_fd } from "@kiruna/form-data"
 import type { FormProps } from "../hooks/use-action"
-import { ZodObject, ZodRawShape, ZodUnion, z } from "zod"
+import { ZodObject, ZodRawShape, ZodDiscriminatedUnion, z } from "zod"
 
 export function FormHelper<
   RawShape extends ZodRawShape,
   Inferred extends
     | ZodObject<RawShape>["_output"]
-    | ZodUnion<[ZodObject<RawShape>]>["_output"]
+    | ZodDiscriminatedUnion<string, [ZodObject<RawShape>]>["_output"]
 >({
   on_submit,
   form_props,

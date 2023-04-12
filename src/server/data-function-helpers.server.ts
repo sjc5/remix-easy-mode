@@ -1,7 +1,7 @@
 import type { DataFunctionArgs } from "@remix-run/server-runtime"
 import { obj_from_ctx } from "./helpers.server"
 import { handle_api_error, handle_api_success } from "./api-responses.server"
-import type { ZodObject, ZodRawShape, ZodSchema, ZodUnion } from "zod"
+import type { ZodSchema } from "zod"
 import { z } from "zod"
 import type { FromPromise } from "@kiruna/promises"
 import { SerializationHandlers } from "../hooks/use-action"
@@ -54,12 +54,9 @@ type DataFunctionHelperOptions = {
 }
 
 export const data_function_helper = async <
-  Inferred extends
-    | ZodObject<RawShape>["_output"]
-    | ZodUnion<[ZodObject<RawShape>]>["_output"],
+  InputSchema extends ZodSchema,
   CallbackRes,
-  Bouncer,
-  RawShape extends ZodRawShape
+  Bouncer
 >({
   ctx,
   input_schema,
@@ -70,9 +67,9 @@ export const data_function_helper = async <
   serialization_handlers,
 }: {
   ctx: DataFunctionArgs
-  input_schema: ZodSchema<Inferred> | null | undefined
+  input_schema: InputSchema | null | undefined
   callback: (
-    props: FromPromise<typeof run_bouncer<Inferred, Bouncer>>
+    props: FromPromise<typeof run_bouncer<z.infer<InputSchema>, Bouncer>>
   ) => Promise<CallbackRes>
   bouncer: BroadBouncer<Bouncer>
   headers?: Headers
@@ -83,12 +80,15 @@ export const data_function_helper = async <
   const throw_on_error = options?.throw_on_error ?? false
 
   try {
-    let parse_input_res: FromPromise<typeof parse_input<Inferred>> | undefined
+    let parse_input_res:
+      | FromPromise<typeof parse_input<z.infer<InputSchema>>>
+      | undefined
     try {
       parse_input_res = await parse_input({
         ctx,
         input_schema:
-          input_schema ?? (z.any() as unknown as ZodSchema<Inferred>),
+          input_schema ??
+          (z.any() as unknown as ZodSchema<z.infer<InputSchema>>),
         parse_fn: serialization_handlers?.parse,
       })
     } catch (thrown_res) {

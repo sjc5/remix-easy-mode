@@ -2,7 +2,12 @@ import type { FetcherWithComponents } from "@remix-run/react"
 import { useFetcher } from "@remix-run/react"
 import type { ActionFunction } from "@remix-run/server-runtime"
 import { useState, useCallback } from "react"
-import type { ZodObject, ZodRawShape, ZodSchema, ZodUnion } from "zod"
+import type {
+  ZodDiscriminatedUnion,
+  ZodObject,
+  ZodRawShape,
+  ZodSchema,
+} from "zod"
 import { z } from "zod"
 import type { OnResolveProps } from "./use-on-resolve"
 import { useOnResolve } from "./use-on-resolve"
@@ -20,7 +25,7 @@ export type ClientOptions = {
 
 export function useAction<
   Action extends ActionFunction,
-  InputSchema extends z.AnyZodObject
+  InputSchema extends ZodSchema
 >({
   path,
   input_schema,
@@ -144,7 +149,7 @@ export type FormProps<
   RawShape extends ZodRawShape,
   Inferred extends
     | ZodObject<RawShape>["_output"]
-    | ZodUnion<[ZodObject<RawShape>]>["_output"]
+    | ZodDiscriminatedUnion<string, [ZodObject<RawShape>]>["_output"]
 > = {
   set_validation_errors: SetValidationErrorsType<ZodSchema<Inferred>>
   input_schema: ZodSchema<Inferred> | null | undefined

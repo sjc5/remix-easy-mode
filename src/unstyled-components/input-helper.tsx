@@ -1,12 +1,12 @@
 import { useMemo, useRef, useState } from "react"
 import type { FormProps } from "../hooks/use-action"
-import { ZodObject, ZodRawShape, ZodUnion, z } from "zod"
+import { ZodObject, ZodRawShape, ZodDiscriminatedUnion } from "zod"
 
 export function InputHelper<
   RawShape extends ZodRawShape,
   Inferred extends
     | ZodObject<RawShape>["_output"]
-    | ZodUnion<[ZodObject<RawShape>]>["_output"],
+    | ZodDiscriminatedUnion<string, [ZodObject<RawShape>]>["_output"],
   InputName extends keyof Inferred
 >({
   label,
@@ -66,7 +66,7 @@ export function TextAreaHelper<
   RawShape extends ZodRawShape,
   Inferred extends
     | ZodObject<RawShape>["_output"]
-    | ZodUnion<[ZodObject<RawShape>]>["_output"],
+    | ZodDiscriminatedUnion<string, [ZodObject<RawShape>]>["_output"],
   InputName extends keyof Inferred
 >({
   label,
@@ -154,7 +154,7 @@ export type InputHelperBaseProps<
   RawShape extends ZodRawShape,
   Inferred extends
     | ZodObject<RawShape>["_output"]
-    | ZodUnion<[ZodObject<RawShape>]>["_output"],
+    | ZodDiscriminatedUnion<string, [ZodObject<RawShape>]>["_output"],
   InputName extends keyof Inferred
 > = {
   label: string
@@ -169,7 +169,7 @@ export type InputHelperProps<
   RawShape extends ZodRawShape,
   Inferred extends
     | ZodObject<RawShape>["_output"]
-    | ZodUnion<[ZodObject<RawShape>]>["_output"],
+    | ZodDiscriminatedUnion<string, [ZodObject<RawShape>]>["_output"],
   InputName extends keyof Inferred
 > = InputHelperBaseProps<RawShape, Inferred, InputName> & {
   styles?: InputStyles
@@ -179,7 +179,7 @@ export type TextAreaHelperProps<
   RawShape extends ZodRawShape,
   Inferred extends
     | ZodObject<RawShape>["_output"]
-    | ZodUnion<[ZodObject<RawShape>]>["_output"],
+    | ZodDiscriminatedUnion<string, [ZodObject<RawShape>]>["_output"],
   InputName extends keyof Inferred
 > = InputHelperBaseProps<RawShape, Inferred, InputName> & {
   styles?: TextAreaStyles
@@ -192,7 +192,7 @@ export function RadioInputHelper<
   RawShape extends ZodRawShape,
   Inferred extends
     | ZodObject<RawShape>["_output"]
-    | ZodUnion<[ZodObject<RawShape>]>["_output"],
+    | ZodDiscriminatedUnion<string, [ZodObject<RawShape>]>["_output"],
   InputName extends keyof Inferred
 >({
   label,
@@ -224,7 +224,7 @@ export function RadioGroupHelper<
   RawShape extends ZodRawShape,
   Inferred extends
     | ZodObject<RawShape>["_output"]
-    | ZodUnion<[ZodObject<RawShape>]>["_output"],
+    | ZodDiscriminatedUnion<string, [ZodObject<RawShape>]>["_output"],
   InputName extends keyof Inferred
 >({
   name,
