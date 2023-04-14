@@ -1,6 +1,6 @@
 import { useMemo, useRef, useState } from "react"
 import type { FormProps } from "../hooks/use-action"
-import { ZodDiscriminatedUnion, ZodObject, ZodRawShape, z } from "zod"
+import { ZodObject, ZodRawShape, z } from "zod"
 
 export function InputHelper<T, N extends keyof Inferred<T>>({
   label,
@@ -138,12 +138,10 @@ export type TextAreaStyles = InputStylesBase & {
   text_area?: string
 }
 
-export type ObjectOrDiscriminatedUnionFromRawShape<RS extends ZodRawShape> =
-  | ZodObject<RS>
-  | ZodDiscriminatedUnion<string, [ZodObject<RS>]>
+export type ZodObjectFromRawShape<RS extends ZodRawShape> = ZodObject<RS>
 
 export type NarrowedForForm<T> = T extends ZodObject<infer RS>
-  ? ObjectOrDiscriminatedUnionFromRawShape<RS>
+  ? ZodObjectFromRawShape<RS>
   : never
 
 export type Inferred<T> = NarrowedForForm<T>["_output"]
