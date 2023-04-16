@@ -1,32 +1,51 @@
-import { FetcherWithComponents, useFetcher } from "@remix-run/react"
+import type { FetcherWithComponents } from "@remix-run/react"
+import { useFetcher } from "@remix-run/react"
+import type { ActionFunction } from "@remix-run/server-runtime"
 import { useState, useCallback } from "react"
-import type { z, ZodSchema, ZodType } from "zod"
-import type { ChildResponse, OnResolveProps } from "./use-on-resolve"
+import type { ZodSchema } from "zod"
+import { z } from "zod"
+import type { OnResolveProps } from "./use-on-resolve"
 import { useOnResolve } from "./use-on-resolve"
+import { get_rem_fetcher_state } from "../common/common-helpers"
+import { obj_to_fd } from "@kiruna/form-data"
 import {
-  get_fetcher_state,
   flatten_safe_parse_errors,
-  obj_to_fd,
-} from "../common/common-helpers"
+  FlattenedSafeParseErrors,
+} from "@kiruna/zod"
+import type { FromPromise } from "@kiruna/promises"
+import { Inferred, NarrowedForForm } from "../unstyled-components/input-helper"
 
-export function useAction<A extends (...args: any[]) => any, S>({
+export type ClientOptions = {
+  skip_client_validation?: boolean
+}
+
+export function useAction<
+  Action extends ActionFunction,
+  InputSchema extends ZodSchema
+>({
   path,
   input_schema,
+  options,
+  serialization_handlers,
   ...initial_props
 }: {
   path: string
-  input_schema: S extends ZodType ? S : never
-} & OnResolveProps<A>) {
-  const fetcher = useFetcher<ChildResponse<A>>()
-  const fetcher_state = get_fetcher_state(fetcher)
+  input_schema: InputSchema | null | undefined
+  options?: ClientOptions
+  serialization_handlers?: SerializationHandlers
+} & OnResolveProps<FromPromise<Action>["data"]>) {
+  const fetcher = useFetcher<Action>()
+  const { is_loading } = get_rem_fetcher_state(fetcher)
 
-  type InputSchema = z.infer<typeof input_schema>
+  type Inferred = z.infer<InputSchema>
 
   const [validation_errors, set_validation_errors] = useState<
-    { [P in allKeys<InputSchema>]?: string[] | undefined } | null
-  >(null)
+    { [P in keyof Inferred]?: string[] | undefined } | undefined
+  >(undefined)
 
-  const [on_resolve, set_on_resolve] = useState<OnResolveProps<A>>({
+  const [on_resolve, set_on_resolve] = useState<
+    OnResolveProps<FromPromise<Action>>
+  >({
     on_success: initial_props.on_success,
     on_error: initial_props.on_error,
     on_settled: initial_props.on_settled,
@@ -39,70 +58,100 @@ export function useAction<A extends (...args: any[]) => any, S>({
 
   const callback = useCallback(
     async (
-      props: { input: InputSchema } & OnResolveProps<A> & {
-          csrf_token: string
+      props: { input: Inferred } & OnResolveProps<Action> & {
+          csrf_token?: string
+        } & {
+          options?: ClientOptions
         }
     ) => {
+      const merged_options = {
+        ...options,
+        ...props.options,
+      }
+
       set_on_resolve({
-        on_success: async (data) => {
-          props.on_success?.(data)
-          initial_props.on_success?.(data)
+        on_success: async (result) => {
+          props.on_success?.(result)
+          initial_props.on_success?.(result)
         },
-        on_error: async (data) => {
-          props.on_error?.(data)
-          initial_props.on_error?.(data)
+        on_error: async (result) => {
+          props.on_error?.(result)
+          initial_props.on_error?.(result)
         },
-        on_settled: async (data) => {
-          props.on_settled?.(data)
-          initial_props.on_settled?.(data)
+        on_settled: async (result) => {
+          props.on_settled?.(result)
+          initial_props.on_settled?.(result)
         },
       })
 
-      const parsed_input = input_schema.safeParse(props.input)
+      const parsed_input =
+        merged_options?.skip_client_validation || !input_schema
+          ? z.any().safeParse(props.input)
+          : input_schema.safeParse(props.input)
 
       if (!parsed_input.success) {
-        const errors = flatten_safe_parse_errors(parsed_input)
-        return set_validation_errors(errors)
+        const flattened_errors = flatten_safe_parse_errors(parsed_input)
+
+        if (process.env.NODE_ENV === "development") {
+          console.error("parse error", {
+            errors: flattened_errors,
+            attempted_input: props.input,
+          })
+        }
+
+        set_validation_errors(flattened_errors)
+        return
       } else {
-        set_validation_errors(null)
+        set_validation_errors(undefined)
       }
 
       fetcher.submit(
-        obj_to_fd({
-          ...props,
-          input: parsed_input.data,
-        }),
+        obj_to_fd(
+          {
+            csrf_token: props.csrf_token,
+            input: parsed_input.data,
+          },
+          serialization_handlers?.stringify
+        ),
         {
           method: "post",
           action: path,
         }
       )
     },
-    [input_schema, path, fetcher, initial_props]
+    [input_schema, path, fetcher, initial_props, options]
   )
 
   return {
-    ...fetcher_state,
-    fetcher: fetcher as FetcherWithComponents<ChildResponse<A>>,
+    is_loading,
+    fetcher: fetcher as FetcherWithComponents<Action>,
+    result: fetcher.data as FromPromise<Action>,
     run: callback,
     form_props: {
       input_schema,
       set_validation_errors,
       validation_errors,
+      options: options ?? {},
+      serialization_handlers,
     },
   }
 }
 
-type allKeys<V> = V extends any ? keyof V : never
-
-type SetValidationErrorsType<T> = React.Dispatch<
-  React.SetStateAction<{ [P in allKeys<T>]?: string[] | undefined } | null>
+type SetValidationErrorsType<Schema extends ZodSchema> = React.Dispatch<
+  React.SetStateAction<FlattenedSafeParseErrors<Schema> | undefined>
 >
 
-type ValidationErrors<T> = { [P in allKeys<T>]?: string[] | undefined } | null
-
 export type FormProps<T> = {
-  set_validation_errors: SetValidationErrorsType<T>
-  input_schema: ZodSchema<T>
-  validation_errors: ValidationErrors<T>
+  set_validation_errors: SetValidationErrorsType<ZodSchema<Inferred<T>>>
+  input_schema: T extends NarrowedForForm<T> ? T : never | null | undefined
+  validation_errors:
+    | FlattenedSafeParseErrors<ZodSchema<Inferred<T>>>
+    | undefined
+  options: ClientOptions
+  serialization_handlers?: SerializationHandlers
+}
+
+export type SerializationHandlers = {
+  stringify: (input: unknown) => string
+  parse: (input: string) => unknown
 }

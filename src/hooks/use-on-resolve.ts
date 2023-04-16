@@ -4,20 +4,19 @@ import type {
   handle_api_error,
   handle_api_success,
 } from "../server/api-responses.server"
-import {
-  SimpleSerializeFrom,
-  get_fetcher_state,
-} from "../common/common-helpers"
+import { get_rem_fetcher_state } from "../common/common-helpers"
+import type { FromPromise } from "@kiruna/promises"
 
-export const useOnResolve = <U extends (...args: any[]) => any>({
+export const useOnResolve = <Data>({
   fetcher,
   on_success,
   on_error,
   on_settled,
 }: {
   fetcher: Fetcher
-} & OnResolveProps<U>) => {
-  const { is_error, is_success } = get_fetcher_state(fetcher)
+} & OnResolveProps<Data>) => {
+  const { is_error, is_success } = get_rem_fetcher_state(fetcher)
+
   const is_settled = is_error || is_success
 
   useEffect(() => {
@@ -41,15 +40,12 @@ export const useOnResolve = <U extends (...args: any[]) => any>({
   ])
 }
 
-export type ChildResponse<A extends (...args: any[]) => any> =
-  SimpleSerializeFrom<
-    typeof handle_api_success<SimpleSerializeFrom<A>>
-  >["result"]
-
-export type OnResolveProps<A extends (...args: any[]) => any> = {
-  on_success?: (data: ChildResponse<A>) => void
-  on_error?: (data: SimpleSerializeFrom<typeof handle_api_error>) => void
+export type OnResolveProps<Data> = {
+  on_success?: (data: FromPromise<typeof handle_api_success<Data>>) => void
+  on_error?: (data: FromPromise<typeof handle_api_error>) => void
   on_settled?: (
-    data: ChildResponse<A> | SimpleSerializeFrom<typeof handle_api_error>
+    data:
+      | FromPromise<typeof handle_api_success<Data>>
+      | FromPromise<typeof handle_api_error>
   ) => void
 }
