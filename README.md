@@ -42,10 +42,7 @@ export const action = (ctx: DataFunctionArgs) => {
     },
     callback: async ({ input, session }) => {
       // do whatever you want here
-      return {
-        message: "Wow, that was easy!" as const
-        at: new Date()
-      }
+      return "Wow, that was easy!" as const
     },
   })
 }

@@ -21,11 +21,7 @@ export const action = (ctx: DataFunctionArgs) => {
         ? `logged in as user ${session.user.id}`
         : "not logged in"
 
-      return {
-        message:
-          `You are ${status_text}. You typed: ${input.any_string}.` as const,
-        at: new Date(),
-      }
+      return `You are ${status_text}. You typed: ${input.any_string}.` as const
     },
   })
 }
