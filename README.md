@@ -2,7 +2,7 @@
 
 ## Description
 
-Opinionated toolkit for developing highly interactive, typesafe Remix apps. Built with zod, and inspired by the TRPC / React Query DX (type-safety + react-query style "on settled" callbacks), plus a few extra goodies (such as typesafe form helpers with automatic client-side validations).
+Opinionated toolkit for developing highly interactive, typesafe Remix apps. Built with zod, and inspired by the TRPC / React Query DX (type-safety + react-query style "on settled" mutation callbacks), plus a few extra goodies (such as typesafe form helpers with automatic client-side validations).
 
 ## Features
 
