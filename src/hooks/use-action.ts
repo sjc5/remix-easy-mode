@@ -33,7 +33,7 @@ export function useAction<
   input_schema: InputSchema | null | undefined
   options?: ClientOptions
   serialization_handlers?: SerializationHandlers
-} & OnResolveProps<FromPromise<Action>["data"]>) {
+} & OnResolveProps<NonNullable<FromPromise<Action>["data"]>>) {
   const fetcher = useFetcher<Action>()
   const { is_loading } = get_rem_fetcher_state(fetcher)
 
