@@ -19,6 +19,10 @@ Opinionated toolkit for developing highly interactive, typesafe Remix apps. Buil
 npm i remix-easy-mode zod
 ```
 
+## Video Tutorial
+
+https://www.youtube.com/watch?v=CxrtfHbXKuM
+
 ## Usage
 
 Example resource route:
