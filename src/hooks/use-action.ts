@@ -125,7 +125,7 @@ export function useAction<
   return {
     is_loading,
     fetcher: fetcher as FetcherWithComponents<Action>,
-    result: fetcher.data as FromPromise<Action>,
+    result: fetcher.data as FromPromise<Action> | undefined,
     run: callback,
     form_props: {
       input_schema,
