@@ -8,7 +8,7 @@ import { SerializationHandlers } from "../hooks/use-action"
 
 export type BouncerProps = {
   ctx: DataFunctionArgs
-  csrf_token: string | undefined
+  csrfToken: string | undefined
 }
 
 type NarrowBouncer<SessionType> = (props: BouncerProps) => Promise<SessionType>
@@ -16,25 +16,25 @@ type BroadBouncer<SessionType> = NarrowBouncer<SessionType> | null | undefined
 
 const parse_input = async <Inferred>({
   ctx,
-  input_schema,
+  schema,
   parse_fn,
 }: {
   ctx: DataFunctionArgs
-  input_schema: ZodSchema<Inferred>
+  schema: ZodSchema<Inferred>
   parse_fn: ((input: string) => unknown) | undefined
 }) => {
   const fd = await obj_from_ctx(ctx, parse_fn)
 
   return {
-    parsed_input: input_schema.parse(fd.input),
-    csrf_token: (fd.csrf_token as string) || undefined,
+    parsed_input: schema.parse(fd.input),
+    csrfToken: (fd.csrfToken as string) || undefined,
   }
 }
 
 const run_bouncer = async <Inferred, Bouncer>({
   ctx,
   bouncer,
-  csrf_token,
+  csrfToken,
   parsed_input,
 }: {
   ctx: DataFunctionArgs
@@ -42,7 +42,7 @@ const run_bouncer = async <Inferred, Bouncer>({
 } & FromPromise<typeof parse_input<Inferred>>) => {
   const session = await bouncer({
     ctx,
-    csrf_token,
+    csrfToken,
   })
 
   return { session, input: parsed_input }
@@ -50,34 +50,34 @@ const run_bouncer = async <Inferred, Bouncer>({
 
 type DataFunctionHelperOptions = {
   send_raw_errors?: boolean
-  throw_on_error?: boolean
+  throw_onError?: boolean
 }
 
-export const data_function_helper = async <
+export const dataFunctionHelper = async <
   InputSchema extends ZodSchema,
-  CallbackRes,
+  FnRes,
   Bouncer
 >({
   ctx,
-  input_schema,
-  callback,
+  schema,
+  fn,
   bouncer,
   headers,
   options,
-  serialization_handlers,
+  seralizationHandlers,
 }: {
   ctx: DataFunctionArgs
-  input_schema: InputSchema | null | undefined
-  callback: (
+  schema: InputSchema | null | undefined
+  fn: (
     props: FromPromise<typeof run_bouncer<z.infer<InputSchema>, Bouncer>>
-  ) => Promise<CallbackRes>
+  ) => Promise<FnRes>
   bouncer: BroadBouncer<Bouncer>
   headers?: Headers
   options?: DataFunctionHelperOptions
-  serialization_handlers?: SerializationHandlers
+  seralizationHandlers?: SerializationHandlers
 }) => {
   const send_raw_errors = options?.send_raw_errors ?? false
-  const throw_on_error = options?.throw_on_error ?? false
+  const throw_onError = options?.throw_onError ?? false
 
   try {
     let parse_input_res:
@@ -86,14 +86,13 @@ export const data_function_helper = async <
     try {
       parse_input_res = await parse_input({
         ctx,
-        input_schema:
-          input_schema ??
-          (z.any() as unknown as ZodSchema<z.infer<InputSchema>>),
-        parse_fn: serialization_handlers?.parse,
+        schema:
+          schema ?? (z.any() as unknown as ZodSchema<z.infer<InputSchema>>),
+        parse_fn: seralizationHandlers?.parse,
       })
     } catch (thrown_res) {
       if (thrown_res instanceof Error) {
-        if (throw_on_error) {
+        if (throw_onError) {
           throw thrown_res
         }
 
@@ -119,13 +118,13 @@ export const data_function_helper = async <
       })
 
       return handle_api_success({
-        result: await callback(bouncer_res),
+        result: await fn(bouncer_res),
         response_init: {
           headers,
         },
       })
     } catch (thrown_res) {
-      if (throw_on_error) {
+      if (throw_onError) {
         throw thrown_res
       }
 
@@ -142,7 +141,7 @@ export const data_function_helper = async <
       throw thrown_res
     }
   } catch (thrown_res) {
-    if (throw_on_error) {
+    if (throw_onError) {
       throw thrown_res
     }
 

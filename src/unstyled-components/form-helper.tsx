@@ -3,19 +3,18 @@ import type { FormProps } from "../hooks/use-action"
 import { Inferred } from "./input-helper"
 
 export function FormHelper<T>({
-  on_submit,
-  form_props,
+  onSubmit,
   ...props
 }: {
-  on_submit: ({
+  onSubmit: ({
     input,
     e,
   }: {
     input: Inferred<T>
     e: React.FormEvent<HTMLFormElement>
   }) => void
-  form_props: FormProps<T>
-} & Omit<React.FormHTMLAttributes<HTMLFormElement>, "onSubmit">) {
+} & FormProps<T> &
+  Omit<React.FormHTMLAttributes<HTMLFormElement>, "onSubmit">) {
   return (
     <form
       onSubmit={(e) => {
@@ -24,10 +23,10 @@ export function FormHelper<T>({
         const fd = new FormData(e.target as HTMLFormElement)
         const input = obj_from_fd(
           fd,
-          form_props.serialization_handlers?.parse
+          props.seralizationHandlers?.parse
         ) as Inferred<T>
 
-        on_submit({
+        onSubmit({
           input,
           e,
         })

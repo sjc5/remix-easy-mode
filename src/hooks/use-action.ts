@@ -16,7 +16,7 @@ import type { FromPromise } from "@kiruna/promises"
 import { Inferred, NarrowedForForm } from "../unstyled-components/input-helper"
 
 export type ClientOptions = {
-  skip_client_validation?: boolean
+  skipClientValidation?: boolean
 }
 
 export function useAction<
@@ -24,31 +24,31 @@ export function useAction<
   InputSchema extends ZodSchema
 >({
   path,
-  input_schema,
+  schema,
   options,
-  serialization_handlers,
+  seralizationHandlers,
   ...initial_props
 }: {
   path: string
-  input_schema: InputSchema | null | undefined
+  schema: InputSchema | null | undefined
   options?: ClientOptions
-  serialization_handlers?: SerializationHandlers
+  seralizationHandlers?: SerializationHandlers
 } & OnResolveProps<NonNullable<FromPromise<Action>["data"]>>) {
   const fetcher = useFetcher<Action>()
-  const { is_loading } = get_rem_fetcher_state(fetcher)
+  const { isLoading } = get_rem_fetcher_state(fetcher)
 
   type Inferred = z.infer<InputSchema>
 
-  const [validation_errors, set_validation_errors] = useState<
+  const [validationErrors, setValidationErrors] = useState<
     { [P in keyof Inferred]?: string[] | undefined } | undefined
   >(undefined)
 
   const [on_resolve, set_on_resolve] = useState<
     OnResolveProps<FromPromise<Action>>
   >({
-    on_success: initial_props.on_success,
-    on_error: initial_props.on_error,
-    on_settled: initial_props.on_settled,
+    onSuccess: initial_props.onSuccess,
+    onError: initial_props.onError,
+    onSettled: initial_props.onSettled,
   })
 
   useOnResolve({
@@ -56,10 +56,10 @@ export function useAction<
     ...on_resolve,
   })
 
-  const callback = useCallback(
+  const fn = useCallback(
     async (
       props: { input: Inferred } & OnResolveProps<Action> & {
-          csrf_token?: string
+          csrfToken?: string
         } & {
           options?: ClientOptions
         }
@@ -70,24 +70,24 @@ export function useAction<
       }
 
       set_on_resolve({
-        on_success: async (result) => {
-          props.on_success?.(result)
-          initial_props.on_success?.(result)
+        onSuccess: async (result) => {
+          props.onSuccess?.(result)
+          initial_props.onSuccess?.(result)
         },
-        on_error: async (result) => {
-          props.on_error?.(result)
-          initial_props.on_error?.(result)
+        onError: async (result) => {
+          props.onError?.(result)
+          initial_props.onError?.(result)
         },
-        on_settled: async (result) => {
-          props.on_settled?.(result)
-          initial_props.on_settled?.(result)
+        onSettled: async (result) => {
+          props.onSettled?.(result)
+          initial_props.onSettled?.(result)
         },
       })
 
       const parsed_input =
-        merged_options?.skip_client_validation || !input_schema
+        merged_options?.skipClientValidation || !schema
           ? z.any().safeParse(props.input)
-          : input_schema.safeParse(props.input)
+          : schema.safeParse(props.input)
 
       if (!parsed_input.success) {
         const flattened_errors = flatten_safe_parse_errors(parsed_input)
@@ -99,19 +99,19 @@ export function useAction<
           })
         }
 
-        set_validation_errors(flattened_errors)
+        setValidationErrors(flattened_errors)
         return
       } else {
-        set_validation_errors(undefined)
+        setValidationErrors(undefined)
       }
 
       fetcher.submit(
         obj_to_fd(
           {
-            csrf_token: props.csrf_token,
+            csrfToken: props.csrfToken,
             input: parsed_input.data,
           },
-          serialization_handlers?.stringify
+          seralizationHandlers?.stringify
         ),
         {
           method: "post",
@@ -119,20 +119,20 @@ export function useAction<
         }
       )
     },
-    [input_schema, path, fetcher, initial_props, options]
+    [schema, path, fetcher, initial_props, options]
   )
 
   return {
-    is_loading,
+    isLoading,
     fetcher: fetcher as FetcherWithComponents<Action>,
     result: fetcher.data as FromPromise<Action> | undefined,
-    run: callback,
-    form_props: {
-      input_schema,
-      set_validation_errors,
-      validation_errors,
+    submit: fn,
+    formProps: {
+      schema,
+      setValidationErrors,
+      validationErrors,
       options: options ?? {},
-      serialization_handlers,
+      seralizationHandlers,
     },
   }
 }
@@ -142,13 +142,11 @@ type SetValidationErrorsType<Schema extends ZodSchema> = React.Dispatch<
 >
 
 export type FormProps<T> = {
-  set_validation_errors: SetValidationErrorsType<ZodSchema<Inferred<T>>>
-  input_schema: T extends NarrowedForForm<T> ? T : never | null | undefined
-  validation_errors:
-    | FlattenedSafeParseErrors<ZodSchema<Inferred<T>>>
-    | undefined
+  setValidationErrors: SetValidationErrorsType<ZodSchema<Inferred<T>>>
+  schema: T extends NarrowedForForm<T> ? T : never | null | undefined
+  validationErrors: FlattenedSafeParseErrors<ZodSchema<Inferred<T>>> | undefined
   options: ClientOptions
-  serialization_handlers?: SerializationHandlers
+  seralizationHandlers?: SerializationHandlers
 }
 
 export type SerializationHandlers = {

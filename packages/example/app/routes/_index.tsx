@@ -2,35 +2,35 @@ import { FormHelper, InputHelper, RadioGroupHelper } from "../../../../index"
 import { useExampleHook } from "./api"
 
 export default function Index() {
-  const { run, form_props, result } = useExampleHook()
+  const { submit, formProps, result, fetcher, isLoading } = useExampleHook()
 
   return (
     <div>
       <FormHelper
-        form_props={form_props}
-        on_submit={({ input }) => {
-          run({
+        {...formProps}
+        onSubmit={({ input }) => {
+          submit({
             input,
-            csrf_token: "5",
+            csrfToken: "5",
           })
         }}
       >
         <InputHelper
-          form_props={form_props}
+          {...formProps}
           label="Hello world"
           name="any_string"
           defaultValue={"any old string"}
         />
 
         <InputHelper
-          form_props={form_props}
+          {...formProps}
           label="Hello world"
           name="hello_world"
           defaultValue={"hello world"}
         />
 
         <RadioGroupHelper
-          form_props={form_props}
+          {...formProps}
           name="letters"
           items={[
             ["A", "a"],

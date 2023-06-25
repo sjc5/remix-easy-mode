@@ -1,11 +1,11 @@
 import { DataFunctionArgs } from "@remix-run/node"
 import { BouncerProps } from "../../../index"
 
-export const bouncer = async ({ ctx, csrf_token }: BouncerProps) => {
+export const bouncer = async ({ ctx, csrfToken }: BouncerProps) => {
   const session = get_session_from_ctx(ctx)
-  const csrf_token_is_valid = csrf_token === "5"
+  const csrfToken_is_valid = csrfToken === "5"
 
-  if (session && csrf_token_is_valid) {
+  if (session && csrfToken_is_valid) {
     return session
   }
 

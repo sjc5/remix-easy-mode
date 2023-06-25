@@ -5,7 +5,6 @@ import { ZodObject, ZodRawShape, z } from "zod"
 export function InputHelper<T, N extends keyof Inferred<T>>({
   label,
   name,
-  form_props,
   value,
   styles,
   ...props
@@ -16,18 +15,16 @@ export function InputHelper<T, N extends keyof Inferred<T>>({
       : props.defaultValue ?? ""
   )
 
-  const errors = form_props.validation_errors?.[name]?.map(
-    (error: string) => error
-  )
+  const errors = props.validationErrors?.[name]?.map((error: string) => error)
 
   const input_value = useMemo(() => {
     const to_be_stringified =
       props.type === "checkbox" ? ref.current?.checked ?? false : value_state
 
-    return form_props.serialization_handlers?.stringify
-      ? form_props.serialization_handlers?.stringify(to_be_stringified)
+    return props.seralizationHandlers?.stringify
+      ? props.seralizationHandlers?.stringify(to_be_stringified)
       : JSON.stringify(to_be_stringified)
-  }, [form_props.serialization_handlers?.stringify, value_state, props.type])
+  }, [props.seralizationHandlers?.stringify, value_state, props.type])
 
   const ref = useRef<HTMLInputElement>(null)
 
@@ -59,22 +56,19 @@ export function InputHelper<T, N extends keyof Inferred<T>>({
 export function TextAreaHelper<T, N extends keyof Inferred<T>>({
   label,
   name,
-  form_props,
   value,
   styles,
   ...props
 }: TextAreaHelperProps<T, N>) {
   const [value_state, set_value_state] = useState(props.defaultValue ?? "")
 
-  const errors = form_props.validation_errors?.[name]?.map(
-    (error: any) => error
-  )
+  const errors = props.validationErrors?.[name]?.map((error: any) => error)
 
   const input_value = useMemo(() => {
-    return form_props.serialization_handlers?.stringify
-      ? form_props.serialization_handlers?.stringify(value_state)
+    return props.seralizationHandlers?.stringify
+      ? props.seralizationHandlers?.stringify(value_state)
       : JSON.stringify(value_state)
-  }, [form_props.serialization_handlers?.stringify, value_state])
+  }, [props.seralizationHandlers?.stringify, value_state])
 
   return (
     <div>
@@ -149,11 +143,10 @@ export type Inferred<T> = NarrowedForForm<T>["_output"]
 export type InputHelperBaseProps<T, N extends keyof Inferred<T>> = {
   label: string
   name: N
-  form_props: FormProps<T>
   value?: Inferred<T>[N]
   defaultValue?: Inferred<T>[N]
   stringify_fn?: (data: any) => string
-}
+} & FormProps<T>
 
 export type InputHelperProps<
   T,
@@ -174,7 +167,6 @@ export type TextAreaHelperProps<
 
 export function RadioInputHelper<T, N extends keyof Inferred<T>>({
   label,
-  form_props,
   styles,
   ...props
 }: InputHelperProps<T, N>) {
@@ -200,7 +192,6 @@ type RadioInputItem<T> = [string, T, boolean?]
 
 export function RadioGroupHelper<T, N extends keyof Inferred<T>>({
   name,
-  form_props,
   styles,
   items,
   ...props

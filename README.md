@@ -29,22 +29,22 @@ Example resource route:
 
 ```tsx
 import type { DataFunctionArgs } from "@remix-run/server-runtime"
-import { data_function_helper, useAction } from "remix-easy-mode"
+import { dataFunctionHelper, useAction } from "remix-easy-mode"
 import { z } from "zod"
 
-const input_schema = z.object({
+const schema = z.object({
   some_user_input: z.string(),
 })
 
 export const action = (ctx: DataFunctionArgs) => {
-  return data_function_helper({
+  return dataFunctionHelper({
     ctx,
-    input_schema,
-    bouncer: async ({ ctx, csrf_token }) => {
+    schema,
+    bouncer: async ({ ctx, csrfToken }) => {
       // do whatever you want here
       // throw an error if something is wrong
     },
-    callback: async ({ input, session }) => {
+    fn: async ({ input, session }) => {
       // do whatever you want here
       return "Wow, that was easy!" as const
     },
@@ -53,10 +53,10 @@ export const action = (ctx: DataFunctionArgs) => {
 
 // return hook from your resource route to use on client
 export const useExampleHook = () => {
-  return useAction<typeof action, typeof input_schema>({
+  return useAction<typeof action, typeof schema>({
     path: "/resource-route",
-    input_schema,
-    on_success: (data) => console.log(data),
+    schema,
+    onSuccess: (data) => console.log(data),
   })
 }
 ```
@@ -68,18 +68,18 @@ import { FormHelper, InputHelper } from "remix-easy-mode"
 import { useExampleHook } from "./resource-route"
 
 export default function Index() {
-  const { run, form_props, result } = useExampleHook()
+  const { run, formProps, result } = useExampleHook()
 
   return (
     <div>
       <FormHelper
-        form_props={form_props}
-        on_submit={({ input }) => {
+        formProps={formProps}
+        onSubmit={({ input }) => {
           run({ input })
         }}
       >
         <InputHelper
-          form_props={form_props}
+          formProps={formProps}
           label="Whatever"
           name="some_user_input"
         />
@@ -112,6 +112,3 @@ MIT
 ## Caveats
 
 - This is a work in progress. It's not yet battle-tested, and the API may change without notice. If you want to use this in production, set your dependency to a specific version.
-- This toolkit is really simple and opinionated. It's not for everyone, and that's OK.
-- If you know of smarter ways to do these things without massively overcomplicating the mental model, please let me know!
-- Yep, snake case. You won't talk me out of it.

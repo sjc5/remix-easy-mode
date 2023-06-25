@@ -9,9 +9,9 @@ import type { FromPromise } from "@kiruna/promises"
 
 export const useOnResolve = <Data>({
   fetcher,
-  on_success,
-  on_error,
-  on_settled,
+  onSuccess,
+  onError,
+  onSettled,
 }: {
   fetcher: Fetcher
 } & OnResolveProps<Data>) => {
@@ -20,30 +20,30 @@ export const useOnResolve = <Data>({
   const is_settled = is_error || is_success
 
   useEffect(() => {
-    if (is_success && on_success) {
-      on_success(fetcher.data)
+    if (is_success && onSuccess) {
+      onSuccess(fetcher.data)
     }
-    if (is_error && on_error) {
-      on_error(fetcher.data)
+    if (is_error && onError) {
+      onError(fetcher.data)
     }
-    if (is_settled && on_settled) {
-      on_settled(fetcher.data)
+    if (is_settled && onSettled) {
+      onSettled(fetcher.data)
     }
   }, [
     fetcher.data,
     is_error,
     is_settled,
     is_success,
-    on_error,
-    on_settled,
-    on_success,
+    onError,
+    onSettled,
+    onSuccess,
   ])
 }
 
 export type OnResolveProps<Data> = {
-  on_success?: (data: FromPromise<typeof handle_api_success<Data>>) => void
-  on_error?: (data: FromPromise<typeof handle_api_error>) => void
-  on_settled?: (
+  onSuccess?: (data: FromPromise<typeof handle_api_success<Data>>) => void
+  onError?: (data: FromPromise<typeof handle_api_error>) => void
+  onSettled?: (
     data:
       | FromPromise<typeof handle_api_success<Data>>
       | FromPromise<typeof handle_api_error>
