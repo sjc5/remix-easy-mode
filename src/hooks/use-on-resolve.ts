@@ -1,8 +1,8 @@
 import type { Fetcher } from "@remix-run/react"
 import { useEffect } from "react"
 import type {
-  handle_api_error,
-  handle_api_success,
+  handleApiError,
+  handleApiSuccess,
 } from "../server/api-responses.server"
 import { getRemFetcherState } from "../common/common-helpers"
 import type { FromPromise } from "@kiruna/promises"
@@ -41,11 +41,11 @@ export const useOnResolve = <Data>({
 }
 
 export type OnResolveProps<Data> = {
-  onSuccess?: (data: FromPromise<typeof handle_api_success<Data>>) => void
-  onError?: (data: FromPromise<typeof handle_api_error>) => void
+  onSuccess?: (data: FromPromise<typeof handleApiSuccess<Data>>) => void
+  onError?: (data: FromPromise<typeof handleApiError>) => void
   onSettled?: (
     data:
-      | FromPromise<typeof handle_api_success<Data>>
-      | FromPromise<typeof handle_api_error>
+      | FromPromise<typeof handleApiSuccess<Data>>
+      | FromPromise<typeof handleApiError>
   ) => void
 }

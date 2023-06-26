@@ -33,7 +33,7 @@ import { dataFunctionHelper, useAction } from "remix-easy-mode"
 import { z } from "zod"
 
 const schema = z.object({
-  some_user_input: z.string(),
+  someUserInput: z.string(),
 })
 
 export const action = (ctx: DataFunctionArgs) => {
@@ -72,7 +72,7 @@ export default function Index() {
   return (
     <div>
       <Form onSubmit={({ input }) => submit({ input })}>
-        <input name={fields.some_user_input.name} />
+        <input name={fields.someUserInput.name} />
         <button type="submit">Submit</button>
       </Form>
 

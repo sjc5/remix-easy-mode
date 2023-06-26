@@ -16,21 +16,18 @@ export default function Index() {
       >
         <label>
           Any old string
-          <input
-            name={fields.any_string.name}
-            defaultValue={"any old string"}
-          />
+          <input name={fields.anyString.name} defaultValue={"any old string"} />
         </label>
 
         <label>
           Hello world (literal)
-          <input name={fields.hello_world.name} defaultValue={"hello world"} />
+          <input name={fields.helloWorld.name} defaultValue={"hello world"} />
         </label>
 
         {fields.letters.options.map((option) => {
           return (
             <label key={option}>
-              {radio_labels[option]}
+              {radioLabels[option]}
               <input
                 type="radio"
                 name={fields.letters.name}
@@ -50,7 +47,7 @@ export default function Index() {
   )
 }
 
-const radio_labels = {
+const radioLabels = {
   a: "A",
   b: "B",
   c: "C",

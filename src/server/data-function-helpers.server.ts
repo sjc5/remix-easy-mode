@@ -1,6 +1,6 @@
 import type { DataFunctionArgs } from "@remix-run/server-runtime"
-import { obj_from_ctx } from "./helpers.server"
-import { handle_api_error, handle_api_success } from "./api-responses.server"
+import { objFromCtx } from "./helpers.server"
+import { handleApiError, handleApiSuccess } from "./api-responses.server"
 import type { ZodSchema } from "zod"
 import { z } from "zod"
 import type { FromPromise } from "@kiruna/promises"
@@ -14,38 +14,38 @@ export type BouncerProps = {
 type NarrowBouncer<SessionType> = (props: BouncerProps) => Promise<SessionType>
 type BroadBouncer<SessionType> = NarrowBouncer<SessionType> | null | undefined
 
-const parse_input = async <Inferred>({
+const parseInput = async <Inferred>({
   ctx,
   schema,
-  parse_fn,
+  parseFn,
 }: {
   ctx: DataFunctionArgs
   schema: ZodSchema<Inferred>
-  parse_fn: ((input: string) => unknown) | undefined
+  parseFn: ((input: string) => unknown) | undefined
 }) => {
-  const fd = await obj_from_ctx(ctx, parse_fn)
+  const fd = await objFromCtx(ctx, parseFn)
 
   return {
-    parsed_input: schema.parse(fd.input),
+    parsedInput: schema.parse(fd.input),
     csrfToken: (fd.csrfToken as string) || undefined,
   }
 }
 
-const run_bouncer = async <Inferred, Bouncer>({
+const runBouncer = async <Inferred, Bouncer>({
   ctx,
   bouncer,
   csrfToken,
-  parsed_input,
+  parsedInput,
 }: {
   ctx: DataFunctionArgs
   bouncer: NarrowBouncer<Bouncer>
-} & FromPromise<typeof parse_input<Inferred>>) => {
+} & FromPromise<typeof parseInput<Inferred>>) => {
   const session = await bouncer({
     ctx,
     csrfToken,
   })
 
-  return { session, input: parsed_input }
+  return { session, input: parsedInput }
 }
 
 type DataFunctionHelperOptions = {
@@ -69,7 +69,7 @@ async function dataFunctionHelper<
   ctx: DataFunctionArgs
   schema: InputSchema | null | undefined
   fn: (
-    props: FromPromise<typeof run_bouncer<z.infer<InputSchema>, Bouncer>>
+    props: FromPromise<typeof runBouncer<z.infer<InputSchema>, Bouncer>>
   ) => Promise<FnRes>
   bouncer: BroadBouncer<Bouncer>
   headers?: Headers
@@ -80,82 +80,82 @@ async function dataFunctionHelper<
   const throwOnError = options?.throwOnError ?? false
 
   try {
-    let parse_input_res:
-      | FromPromise<typeof parse_input<z.infer<InputSchema>>>
+    let parseInputRes:
+      | FromPromise<typeof parseInput<z.infer<InputSchema>>>
       | undefined
     try {
-      parse_input_res = await parse_input({
+      parseInputRes = await parseInput({
         ctx,
         schema:
           schema ?? (z.any() as unknown as ZodSchema<z.infer<InputSchema>>),
-        parse_fn: serializationHandlers?.parse,
+        parseFn: serializationHandlers?.parse,
       })
-    } catch (thrown_res) {
-      if (thrown_res instanceof Error) {
+    } catch (thrownRes) {
+      if (thrownRes instanceof Error) {
         if (throwOnError) {
-          throw thrown_res
+          throw thrownRes
         }
 
-        return handle_api_error({
-          error: thrown_res,
-          error_message: sendRawErrors ? thrown_res.message : "Invalid input.",
-          response_init: {
+        return handleApiError({
+          error: thrownRes,
+          errorMessage: sendRawErrors ? thrownRes.message : "Invalid input.",
+          responseInit: {
             status: 400,
           },
         })
       }
 
-      throw thrown_res
+      throw thrownRes
     }
 
     try {
-      const bouncer_res = await run_bouncer({
+      const bouncerRes = await runBouncer({
         ctx,
         bouncer: bouncer ?? (() => Promise.resolve(undefined as Bouncer)),
-        ...parse_input_res,
+        ...parseInputRes,
       })
 
-      return handle_api_success({
-        result: await fn(bouncer_res),
-        response_init: {
+      return handleApiSuccess({
+        result: await fn(bouncerRes),
+        responseInit: {
           headers,
         },
       })
-    } catch (thrown_res) {
+    } catch (thrownRes) {
       if (throwOnError) {
-        throw thrown_res
+        throw thrownRes
       }
 
-      if (thrown_res instanceof Error) {
-        return handle_api_error({
-          error: thrown_res,
-          error_message: sendRawErrors ? thrown_res.message : "Unauthorized.",
-          response_init: {
+      if (thrownRes instanceof Error) {
+        return handleApiError({
+          error: thrownRes,
+          errorMessage: sendRawErrors ? thrownRes.message : "Unauthorized.",
+          responseInit: {
             status: 401,
           },
         })
       }
 
-      throw thrown_res
+      throw thrownRes
     }
-  } catch (thrown_res) {
+  } catch (thrownRes) {
     if (throwOnError) {
-      throw thrown_res
+      throw thrownRes
     }
 
-    if (thrown_res instanceof Error) {
-      return handle_api_error({
-        error: thrown_res,
-        error_message: sendRawErrors
-          ? thrown_res.message
+    if (thrownRes instanceof Error) {
+      return handleApiError({
+        error: thrownRes,
+        errorMessage: sendRawErrors
+          ? thrownRes.message
           : "Something went wrong.",
-        response_init: {
+        responseInit: {
           status: 500,
         },
       })
     }
 
-    throw thrown_res
+    throw thrownRes
   }
 }
 

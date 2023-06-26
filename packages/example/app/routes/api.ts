@@ -6,10 +6,10 @@ import { dataFunctionHelper, useAction } from "remix-easy-mode"
 import { bouncer } from "../bouncer"
 
 const schema = z.object({
-  any_string: z.string().refine((val) => val !== "bad message", {
+  anyString: z.string().refine((val) => val !== "bad message", {
     message: `Oops, you weren't supposed to write that!`,
   }),
-  hello_world: z.literal("hello world"),
+  helloWorld: z.literal("hello world"),
   letters: z.union([z.literal("a"), z.literal("b"), z.literal("c")]),
 })
 
@@ -19,11 +19,11 @@ export const action = (ctx: DataFunctionArgs) => {
     schema,
     bouncer,
     fn: async ({ input, session }) => {
-      const status_text = session.user
+      const statusText = session.user
         ? `logged in as user ${session.user.id}`
         : "not logged in"
 
-      return `You are ${status_text}. You typed: ${input.any_string}.` as const
+      return `You are ${statusText}. You typed: ${input.anyString}.` as const
     },
   })
 }

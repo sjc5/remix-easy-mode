@@ -13,7 +13,10 @@ import { z } from "zod"
 import type { OnResolveProps } from "./use-on-resolve"
 import { useOnResolve } from "./use-on-resolve"
 import { getRemFetcherState } from "../common/common-helpers"
-import { obj_from_fd, obj_to_fd } from "@kiruna/form-data"
+import {
+  obj_from_fd as objectFromFormData,
+  obj_to_fd as objectToFormData,
+} from "@kiruna/form-data"
 import type { FromPromise } from "@kiruna/promises"
 
 export type ClientOptions = {
@@ -28,7 +31,7 @@ export function useAction<
   schema,
   options,
   serializationHandlers,
-  ...initial_props
+  ...initialProps
 }: {
   path: string
   schema: InputSchema | null | undefined
@@ -36,7 +39,7 @@ export function useAction<
   serializationHandlers?: SerializationHandlers
 } & OnResolveProps<NonNullable<FromPromise<Action>["data"]>>) {
   const fetcher = useFetcher<Action>()
-  const fetcher_state = getRemFetcherState(fetcher)
+  const fetcherState = getRemFetcherState(fetcher)
 
   type LocalInferred = z.infer<InputSchema>
   type Keys = keyof LocalInferred | "csrfToken"
@@ -75,17 +78,17 @@ export function useAction<
 
   console.log({ fields })
 
-  const [on_resolve, set_on_resolve] = useState<
+  const [onResolve, setOnResolve] = useState<
     OnResolveProps<FromPromise<Action>>
   >({
-    onSuccess: initial_props.onSuccess,
-    onError: initial_props.onError,
-    onSettled: initial_props.onSettled,
+    onSuccess: initialProps.onSuccess,
+    onError: initialProps.onError,
+    onSettled: initialProps.onSettled,
   })
 
   useOnResolve({
     fetcher,
-    ...on_resolve,
+    ...onResolve,
   })
 
   const fn = useCallback(
@@ -96,50 +99,50 @@ export function useAction<
           options?: ClientOptions
         }
     ) => {
-      const merged_options = {
+      const mergedOptions = {
         ...options,
         ...props.options,
       }
 
-      set_on_resolve({
+      setOnResolve({
         onSuccess: async (result) => {
           props.onSuccess?.(result)
-          initial_props.onSuccess?.(result)
+          initialProps.onSuccess?.(result)
         },
         onError: async (result) => {
           props.onError?.(result)
-          initial_props.onError?.(result)
+          initialProps.onError?.(result)
         },
         onSettled: async (result) => {
           props.onSettled?.(result)
-          initial_props.onSettled?.(result)
+          initialProps.onSettled?.(result)
         },
       })
 
-      const parsed_input =
-        merged_options?.skipClientValidation || !schema
+      const parsedInput =
+        mergedOptions?.skipClientValidation || !schema
           ? z.any().safeParse(props.input)
           : schema.safeParse(props.input)
 
-      if (!parsed_input.success) {
+      if (!parsedInput.success) {
         if (process.env.NODE_ENV === "development") {
           console.error("parse error", {
-            errors: parsed_input.error,
-            attempted_input: props.input,
+            errors: parsedInput.error,
+            attemptedInput: props.input,
           })
         }
 
-        setValidationErrors(parsed_input.error)
+        setValidationErrors(parsedInput.error)
         return
       } else {
         setValidationErrors(undefined)
       }
 
       fetcher.submit(
-        obj_to_fd(
+        objectToFormData(
           {
             csrfToken: props.csrfToken,
-            input: parsed_input.data,
+            input: parsedInput.data,
           },
           serializationHandlers?.stringify
         ),
@@ -149,7 +152,7 @@ export function useAction<
         }
       )
     },
-    [schema, path, fetcher, initial_props, options]
+    [schema, path, fetcher, initialProps, options]
   )
 
   const formProps = useMemo(() => {
@@ -180,7 +183,7 @@ export function useAction<
           e.preventDefault()
 
           const fd = new FormData(e.target as HTMLFormElement)
-          const input = obj_from_fd(
+          const input = objectFromFormData(
             fd,
             formProps.serializationHandlers?.parse
           ) as Inferred<T>
@@ -198,7 +201,7 @@ export function useAction<
   }, [])
 
   return {
-    ...fetcher_state,
+    ...fetcherState,
     fetcher: fetcher as FetcherWithComponents<Action>,
     result: fetcher.data as FromPromise<Action> | undefined,
     submit: fn,
