@@ -168,7 +168,7 @@ export function useAction<
     }
   }, [])
 
-  const Form = useCallback(function Form<T>({
+  const Form = useCallback(function Form({
     onSubmit,
     ...props
   }: {
@@ -176,7 +176,7 @@ export function useAction<
       input,
       e,
     }: {
-      input: Inferred<T>
+      input: LocalInferred
       e: React.FormEvent<HTMLFormElement>
     }) => void
   } & Omit<React.FormHTMLAttributes<HTMLFormElement>, "onSubmit">) {
@@ -189,7 +189,7 @@ export function useAction<
           const input = objectFromFormData(
             fd,
             formProps.serializationHandlers?.parse
-          ) as Inferred<T>
+          ) as LocalInferred
 
           onSubmit({
             input,

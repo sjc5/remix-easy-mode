@@ -50,7 +50,7 @@ export default function Index() {
                 name={fields.letters2.name}
                 value={option}
                 key={option}
-                defaultChecked={option === "a"}
+                defaultChecked={option === "b"}
               />
             </label>
           )
@@ -66,7 +66,7 @@ export default function Index() {
                 name={fields.letters3.name}
                 value={option}
                 key={option}
-                defaultChecked={option === "a"}
+                defaultChecked={option === "c"}
               />
             </label>
           )
