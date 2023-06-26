@@ -1,42 +1,50 @@
-import type { ZodEnumDef, ZodNativeEnumDef, ZodUnionDef } from "zod"
+import type { ZodEnumDef, ZodNativeEnumDef, ZodTypeDef, ZodUnionDef } from "zod"
 
-// This stinks. How can we do it better?
-function optionsFromZodShapeDef(
-  zodShapeDef: ZodUnionDef | ZodEnumDef | ZodNativeEnumDef
-) {
+type TargetRadioZodDefs = ZodUnionDef | ZodEnumDef | ZodNativeEnumDef
+
+function optionsFromZodShapeDef(zodTypeDef: ZodTypeDef | undefined) {
   try {
-    if (typeof zodShapeDef !== "object") return
-
-    function isZodUnionDef(
-      x: ZodUnionDef | ZodEnumDef | ZodNativeEnumDef
-    ): x is ZodUnionDef {
-      return x.typeName === "ZodUnion"
+    if (
+      typeof zodTypeDef !== "object" ||
+      !zodTypeDefHasTypeNameProp(zodTypeDef)
+    ) {
+      return
     }
 
-    if (isZodUnionDef(zodShapeDef)) {
-      return zodShapeDef.options.map((x: any) => x._def.value)
+    if (isZodUnionDef(zodTypeDef)) {
+      return zodTypeDef.options.map((x) => x._def.value)
     }
 
-    function isZodEnumDef(
-      x: ZodUnionDef | ZodEnumDef | ZodNativeEnumDef
-    ): x is ZodEnumDef {
-      return x?.typeName === "ZodEnum"
+    if (isZodEnumDef(zodTypeDef)) {
+      return zodTypeDef.values
     }
 
-    if (isZodEnumDef(zodShapeDef)) {
-      return zodShapeDef.values
+    if (isZodNativeEnumDef(zodTypeDef)) {
+      return Object.values(zodTypeDef?.values)
     }
-
-    function isZodNativeEnumDef(
-      x: ZodUnionDef | ZodEnumDef | ZodNativeEnumDef
-    ): x is ZodNativeEnumDef {
-      return x?.typeName === "ZodNativeEnum"
-    }
-
-    if (isZodNativeEnumDef(zodShapeDef)) {
-      return Object.values(zodShapeDef?.values)
-    }
-  } catch (ignore) {}
+  } catch (ignore) {
+    console.error("Error in optionsFromZodShapeDef.")
+  }
 }
 
 export { optionsFromZodShapeDef }
+
+function zodTypeDefHasTypeNameProp(
+  x: ZodTypeDef & {
+    typeName?: string
+  }
+): x is TargetRadioZodDefs {
+  return !!x?.typeName
+}
+
+function isZodUnionDef(x: TargetRadioZodDefs): x is ZodUnionDef {
+  return x.typeName === "ZodUnion"
+}
+
+function isZodEnumDef(x: TargetRadioZodDefs): x is ZodEnumDef {
+  return x.typeName === "ZodEnum"
+}
+
+function isZodNativeEnumDef(x: TargetRadioZodDefs): x is ZodNativeEnumDef {
+  return x.typeName === "ZodNativeEnum"
+}

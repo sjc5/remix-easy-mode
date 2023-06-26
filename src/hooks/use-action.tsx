@@ -8,6 +8,7 @@ import type {
   ZodIssue,
   ZodObject,
   ZodRawShape,
+  ZodTypeDef,
 } from "zod"
 import { z } from "zod"
 import type { OnResolveProps } from "./use-on-resolve"
@@ -43,12 +44,9 @@ export function useAction<
   const fetcherState = getRemFetcherState(fetcher)
 
   type LocalInferred = z.infer<InputSchema>
-  type Keys = keyof LocalInferred | "csrfToken"
+  type Keys = keyof LocalInferred
 
-  const keys = Object.keys({
-    ...(schema?.shape ?? {}),
-    csrfToken: "",
-  }) as Keys[]
+  const keys = Object.keys(schema?.shape ?? {}) as Keys[]
 
   const [validationErrors, setValidationErrors] = useState<
     ZodError<LocalInferred> | undefined
@@ -63,7 +61,9 @@ export function useAction<
   } = useMemo(() => {
     return Object.fromEntries(
       keys.map((key) => {
-        const shapeDef = (schema?.shape as any)[key]?._def
+        const shapeDef = (schema?.shape as any)?.[key]?._def as
+          | ZodTypeDef
+          | undefined
 
         return [
           key,
