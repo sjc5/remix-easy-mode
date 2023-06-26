@@ -1,5 +1,6 @@
 import { DataFunctionArgs } from "@remix-run/node"
-import { BouncerProps } from "../../../index"
+// import { BouncerProps } from "../../../index"
+import { BouncerProps } from "remix-easy-mode"
 
 export const bouncer = async ({ ctx, csrfToken }: BouncerProps) => {
   const session = get_session_from_ctx(ctx)

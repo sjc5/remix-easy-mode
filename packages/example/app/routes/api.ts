@@ -1,6 +1,8 @@
 import type { DataFunctionArgs } from "@remix-run/node"
 import { z } from "zod"
-import { dataFunctionHelper, useAction } from "../../../../index"
+// import { dataFunctionHelper, useAction } from "../../../../index"
+import { dataFunctionHelper, useAction } from "remix-easy-mode"
+
 import { bouncer } from "../bouncer"
 
 const schema = z.object({

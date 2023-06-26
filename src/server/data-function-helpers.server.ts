@@ -49,11 +49,11 @@ const run_bouncer = async <Inferred, Bouncer>({
 }
 
 type DataFunctionHelperOptions = {
-  send_raw_errors?: boolean
-  throw_onError?: boolean
+  sendRawErrors?: boolean
+  throwOnError?: boolean
 }
 
-export const dataFunctionHelper = async <
+async function dataFunctionHelper<
   InputSchema extends ZodSchema,
   FnRes,
   Bouncer
@@ -64,7 +64,7 @@ export const dataFunctionHelper = async <
   bouncer,
   headers,
   options,
-  seralizationHandlers,
+  serializationHandlers,
 }: {
   ctx: DataFunctionArgs
   schema: InputSchema | null | undefined
@@ -74,10 +74,10 @@ export const dataFunctionHelper = async <
   bouncer: BroadBouncer<Bouncer>
   headers?: Headers
   options?: DataFunctionHelperOptions
-  seralizationHandlers?: SerializationHandlers
-}) => {
-  const send_raw_errors = options?.send_raw_errors ?? false
-  const throw_onError = options?.throw_onError ?? false
+  serializationHandlers?: SerializationHandlers
+}) {
+  const sendRawErrors = options?.sendRawErrors ?? false
+  const throwOnError = options?.throwOnError ?? false
 
   try {
     let parse_input_res:
@@ -88,19 +88,17 @@ export const dataFunctionHelper = async <
         ctx,
         schema:
           schema ?? (z.any() as unknown as ZodSchema<z.infer<InputSchema>>),
-        parse_fn: seralizationHandlers?.parse,
+        parse_fn: serializationHandlers?.parse,
       })
     } catch (thrown_res) {
       if (thrown_res instanceof Error) {
-        if (throw_onError) {
+        if (throwOnError) {
           throw thrown_res
         }
 
         return handle_api_error({
           error: thrown_res,
-          error_message: send_raw_errors
-            ? thrown_res.message
-            : "Invalid input.",
+          error_message: sendRawErrors ? thrown_res.message : "Invalid input.",
           response_init: {
             status: 400,
           },
@@ -124,14 +122,14 @@ export const dataFunctionHelper = async <
         },
       })
     } catch (thrown_res) {
-      if (throw_onError) {
+      if (throwOnError) {
         throw thrown_res
       }
 
       if (thrown_res instanceof Error) {
         return handle_api_error({
           error: thrown_res,
-          error_message: send_raw_errors ? thrown_res.message : "Unauthorized.",
+          error_message: sendRawErrors ? thrown_res.message : "Unauthorized.",
           response_init: {
             status: 401,
           },
@@ -141,14 +139,14 @@ export const dataFunctionHelper = async <
       throw thrown_res
     }
   } catch (thrown_res) {
-    if (throw_onError) {
+    if (throwOnError) {
       throw thrown_res
     }
 
     if (thrown_res instanceof Error) {
       return handle_api_error({
         error: thrown_res,
-        error_message: send_raw_errors
+        error_message: sendRawErrors
           ? thrown_res.message
           : "Something went wrong.",
         response_init: {
@@ -160,3 +158,5 @@ export const dataFunctionHelper = async <
     throw thrown_res
   }
 }
+
+export { dataFunctionHelper }

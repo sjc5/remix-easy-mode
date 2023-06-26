@@ -1,12 +1,12 @@
 import { json } from "@remix-run/server-runtime"
 
-export const handle_api_success = async <RawResult>({
+async function handle_api_success<RawResult>({
   result,
   response_init,
 }: {
   result: RawResult
   response_init?: ResponseInit
-}) => {
+}) {
   const payload = {
     success: true as const,
     data: result,
@@ -17,7 +17,7 @@ export const handle_api_success = async <RawResult>({
   return json(payload, response_init) as unknown as typeof payload
 }
 
-export const handle_api_error = async ({
+async function handle_api_error({
   error,
   error_message,
   response_init,
@@ -25,7 +25,7 @@ export const handle_api_error = async ({
   error: unknown
   error_message: string
   response_init?: ResponseInit
-}) => {
+}) {
   console.error(error)
 
   const payload = {
@@ -42,3 +42,5 @@ export const handle_api_error = async ({
 
   return json(payload, response_init_to_use) as unknown as typeof payload
 }
+
+export { handle_api_success, handle_api_error }

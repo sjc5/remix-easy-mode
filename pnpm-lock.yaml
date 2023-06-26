@@ -10,9 +10,6 @@ importers:
       '@kiruna/promises':
         specifier: 0.0.0-alpha.7
         version: 0.0.0-alpha.7
-      '@kiruna/zod':
-        specifier: 0.0.0-alpha.8
-        version: 0.0.0-alpha.8(zod@3.21.4)
     devDependencies:
       '@remix-run/eslint-config':
         specifier: ^1.15.0
@@ -55,13 +52,16 @@ importers:
         version: 1.15.0(react-dom@18.2.0)(react@18.2.0)
       isbot:
         specifier: latest
-        version: 3.6.8
+        version: 3.6.12
       react:
         specifier: ^18.2.0
         version: 18.2.0
       react-dom:
         specifier: ^18.2.0
         version: 18.2.0(react@18.2.0)
+      remix-easy-mode:
+        specifier: 0.0.3-beta.3
+        version: link:../..
     devDependencies:
       '@remix-run/dev':
         specifier: ^1.15.0
@@ -2094,14 +2094,6 @@ packages:
 
   /@kiruna/promises@0.0.0-alpha.7:
     resolution: {integrity: sha512-6fAHkIB6wNrNqCzO5V54Dp2SEnQBhssvTolP4mi1CHUCNSgXLwr/ZvEeMjGLHpyl0xPBCmpOcbDHwNirMbP+1Q==}
-    dev: false
-
-  /@kiruna/zod@0.0.0-alpha.8(zod@3.21.4):
-    resolution: {integrity: sha512-8CJdhRRLX/2U2839CpXQ6CEBSSU2dBwLuAQcg99ijh0QTgyVr/aSUn/IGWryL1Xs0SU3ZJ5gVwG35+r+QbfV3Q==}
-    peerDependencies:
-      zod: ^3.21.4
-    dependencies:
-      zod: 3.21.4
     dev: false
 
   /@nicolo-ribaudo/eslint-scope-5-internals@5.1.1-v1:
@@ -5290,8 +5282,8 @@ packages:
     resolution: {integrity: sha512-xHjhDr3cNBK0BzdUJSPXZntQUx/mwMS5Rw4A7lPJ90XGAO6ISP/ePDNuo0vhqOZU+UD5JoodwCAAoZQd3FeAKw==}
     dev: true
 
-  /isbot@3.6.8:
-    resolution: {integrity: sha512-V8XUXN0/UYxfgrui4o38pmOve2eO/1KjluxR1G8Qnu5gqlUiNrvtX06t1W5n8vFtrtKfHj96iFYuPL39jXUe8g==}
+  /isbot@3.6.12:
+    resolution: {integrity: sha512-dGc3jRIORywaaqs4G5wj+58i5/l1eoI75q7XNiyW9Sgfoyr3QkyDZUXw+cuB7AOFq/0aruCQrGLrnKJlQarP/g==}
     engines: {node: '>=12'}
     dev: false
 
@@ -8170,6 +8162,7 @@ packages:
 
   /zod@3.21.4:
     resolution: {integrity: sha512-m46AKbrzKVzOzs/DZgVnG5H55N1sv1M8qZU3A8RIKbs3mrACDNeIOeilDymVb2HdmP8uwshOCF4uJ8uM9rCqJw==}
+    dev: true
 
   /zwitch@2.0.4:
     resolution: {integrity: sha512-bXE4cR/kVZhKZX/RjPEflHaKVhUVl85noU3v6b8apfQEc1x4A+zBxjZ4lN8LqGd6WZ3dl98pY4o717VFmoPp+A==}

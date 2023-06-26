@@ -4,7 +4,7 @@ import type {
   handle_api_error,
   handle_api_success,
 } from "../server/api-responses.server"
-import { get_rem_fetcher_state } from "../common/common-helpers"
+import { getRemFetcherState } from "../common/common-helpers"
 import type { FromPromise } from "@kiruna/promises"
 
 export const useOnResolve = <Data>({
@@ -15,25 +15,25 @@ export const useOnResolve = <Data>({
 }: {
   fetcher: Fetcher
 } & OnResolveProps<Data>) => {
-  const { is_error, is_success } = get_rem_fetcher_state(fetcher)
+  const { isError, isSuccess } = getRemFetcherState(fetcher)
 
-  const is_settled = is_error || is_success
+  const isSettled = isError || isSuccess
 
   useEffect(() => {
-    if (is_success && onSuccess) {
+    if (isSuccess && onSuccess) {
       onSuccess(fetcher.data)
     }
-    if (is_error && onError) {
+    if (isError && onError) {
       onError(fetcher.data)
     }
-    if (is_settled && onSettled) {
+    if (isSettled && onSettled) {
       onSettled(fetcher.data)
     }
   }, [
     fetcher.data,
-    is_error,
-    is_settled,
-    is_success,
+    isError,
+    isSettled,
+    isSuccess,
     onError,
     onSettled,
     onSuccess,

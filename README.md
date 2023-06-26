@@ -64,28 +64,17 @@ export const useExampleHook = () => {
 Example client-side form:
 
 ```tsx
-import { FormHelper, InputHelper } from "remix-easy-mode"
 import { useExampleHook } from "./resource-route"
 
 export default function Index() {
-  const { run, formProps, result } = useExampleHook()
+  const { Form, fields, submit, result } = useExampleHook()
 
   return (
     <div>
-      <FormHelper
-        formProps={formProps}
-        onSubmit={({ input }) => {
-          run({ input })
-        }}
-      >
-        <InputHelper
-          formProps={formProps}
-          label="Whatever"
-          name="some_user_input"
-        />
-
+      <Form onSubmit={({ input }) => submit({ input })}>
+        <input name={fields.some_user_input.name} />
         <button type="submit">Submit</button>
-      </FormHelper>
+      </Form>
 
       <pre>{JSON.stringify(result, null, 2)}</pre>
     </div>
