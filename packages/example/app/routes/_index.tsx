@@ -23,6 +23,15 @@ export default function Index() {
               letters2: "c",
             },
             csrfToken: "5",
+            onSuccess: (successRes) => {
+              console.log("from mutate onSuccess!", successRes)
+            },
+            onError: (errorRes) => {
+              console.log("from mutate onError!", errorRes)
+            },
+            onSettled: (settledRes) => {
+              console.log("from mutate onSettled!", settledRes)
+            },
           })
         }}
         style={{ display: "flex", flexDirection: "column", gap: "1rem" }}

@@ -2,14 +2,7 @@ import type { FetcherWithComponents } from "@remix-run/react"
 import { useFetcher } from "@remix-run/react"
 import type { ActionFunction } from "@remix-run/server-runtime"
 import { useState, useCallback, useMemo } from "react"
-import type {
-  SomeZodObject,
-  ZodError,
-  ZodIssue,
-  ZodObject,
-  ZodRawShape,
-  ZodTypeDef,
-} from "zod"
+import type { SomeZodObject, ZodError, ZodIssue, ZodTypeDef } from "zod"
 import { z } from "zod"
 import type { OnResolveProps } from "./use-on-resolve"
 import { useOnResolve } from "./use-on-resolve"
@@ -87,10 +80,8 @@ export function useAction<
     ) as any
   }, [validationErrors, keys])
 
-  console.log({ fields })
-
   const [onResolve, setOnResolve] = useState<
-    OnResolveProps<FromPromise<Action>>
+    OnResolveProps<NonNullable<FromPromise<Action>["data"]>>
   >({
     onSuccess: initialProps.onSuccess,
     onError: initialProps.onError,
@@ -104,7 +95,9 @@ export function useAction<
 
   const mutate = useCallback(
     async (
-      props: { input: LocalInferred } & OnResolveProps<Action> & {
+      props: { input: LocalInferred } & OnResolveProps<
+        NonNullable<FromPromise<Action>["data"]>
+      > & {
           csrfToken?: string
         } & {
           options?: ClientOptions
@@ -166,39 +159,41 @@ export function useAction<
     [schema, path, fetcher, initialProps, options]
   )
 
-  const Form = useCallback(function Form({
-    onSubmit,
-    ...props
-  }: {
-    onSubmit: ({
-      input,
-      e,
+  const Form = useMemo(() => {
+    return function Form({
+      onSubmit,
+      ...props
     }: {
-      input: LocalInferred
-      e: React.FormEvent<HTMLFormElement>
-    }) => void
-  } & Omit<React.FormHTMLAttributes<HTMLFormElement>, "onSubmit">) {
-    return (
-      <form
-        onSubmit={(e) => {
-          e.preventDefault()
+      onSubmit: ({
+        input,
+        e,
+      }: {
+        input: LocalInferred
+        e: React.FormEvent<HTMLFormElement>
+      }) => void
+    } & Omit<React.FormHTMLAttributes<HTMLFormElement>, "onSubmit">) {
+      return (
+        <form
+          onSubmit={(e) => {
+            e.preventDefault()
 
-          const fd = new FormData(e.target as HTMLFormElement)
-          const input = objectFromFormData(
-            fd,
-            serializationHandlers?.parse
-          ) as LocalInferred
+            const fd = new FormData(e.target as HTMLFormElement)
+            const input = objectFromFormData(
+              fd,
+              serializationHandlers?.parse
+            ) as LocalInferred
 
-          onSubmit({
-            input,
-            e,
-          })
-        }}
-        {...props}
-      >
-        {props.children}
-      </form>
-    )
+            onSubmit({
+              input,
+              e,
+            })
+          }}
+          {...props}
+        >
+          {props.children}
+        </form>
+      )
+    }
   }, [])
 
   return {

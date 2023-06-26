@@ -42,8 +42,8 @@ export const useExampleHook = () => {
   return useAction<typeof action, typeof schema>({
     path: "/api",
     schema,
-    onSuccess: (result) => {
-      console.log("Jerry", result.data)
+    onSuccess: (successRes) => {
+      console.log("from useAction onSuccess!", successRes)
     },
   })
 }
