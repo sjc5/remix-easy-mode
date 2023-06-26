@@ -4,9 +4,9 @@ import { BouncerProps } from "remix-easy-mode"
 
 export const bouncer = async ({ ctx, csrfToken }: BouncerProps) => {
   const session = get_session_from_ctx(ctx)
-  const csrfToken_is_valid = csrfToken === "5"
+  const csrf_token_is_valid = csrfToken === "5"
 
-  if (session && csrfToken_is_valid) {
+  if (session && csrf_token_is_valid) {
     return session
   }
 
