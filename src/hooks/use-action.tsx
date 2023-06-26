@@ -54,9 +54,13 @@ export function useAction<
 
   const fields: {
     [k in Keys]: {
-      name: k
       errors: ZodIssue[] | undefined
-      options: Parameters<typeof fn>[0]["input"][k][] | undefined
+      options: Parameters<typeof mutate>[0]["input"][k][] | undefined
+      inputProps: {
+        schema: typeof schema
+        stringifyFn: SerializationHandlers["stringify"] | undefined
+        name: k
+      }
     }
   } = useMemo(() => {
     return Object.fromEntries(
@@ -68,11 +72,15 @@ export function useAction<
         return [
           key,
           {
-            name: key,
             errors: validationErrors?.issues.filter(
               (issue) => issue.path[0] === key
             ),
             options: optionsFromZodShapeDef(shapeDef),
+            inputProps: {
+              schema,
+              stringifyFn: serializationHandlers?.stringify,
+              name: key,
+            },
           },
         ]
       })
@@ -94,7 +102,7 @@ export function useAction<
     ...onResolve,
   })
 
-  const fn = useCallback(
+  const mutate = useCallback(
     async (
       props: { input: LocalInferred } & OnResolveProps<Action> & {
           csrfToken?: string
@@ -158,16 +166,6 @@ export function useAction<
     [schema, path, fetcher, initialProps, options]
   )
 
-  const formProps = useMemo(() => {
-    return {
-      schema,
-      setValidationErrors,
-      validationErrors,
-      options: options ?? {},
-      serializationHandlers,
-    }
-  }, [])
-
   const Form = useCallback(function Form({
     onSubmit,
     ...props
@@ -188,7 +186,7 @@ export function useAction<
           const fd = new FormData(e.target as HTMLFormElement)
           const input = objectFromFormData(
             fd,
-            formProps.serializationHandlers?.parse
+            serializationHandlers?.parse
           ) as LocalInferred
 
           onSubmit({
@@ -207,9 +205,8 @@ export function useAction<
     ...fetcherState,
     fetcher: fetcher as FetcherWithComponents<Action>,
     result: fetcher.data as FromPromise<Action> | undefined,
-    submit: fn,
+    mutate,
     Form,
-    stringify: serializationHandlers?.stringify,
     fields,
   }
 }
@@ -218,11 +215,3 @@ export type SerializationHandlers = {
   stringify: (input: unknown) => string
   parse: (input: string) => unknown
 }
-
-type ZodObjectFromRawShape<RS extends ZodRawShape> = ZodObject<RS>
-
-type NarrowedForForm<T> = T extends ZodObject<infer RS>
-  ? ZodObjectFromRawShape<RS>
-  : never
-
-type Inferred<T> = NarrowedForForm<T>["_output"]

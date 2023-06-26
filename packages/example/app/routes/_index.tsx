@@ -1,27 +1,50 @@
+import React from "react"
+import { InputHelper } from "../../../../src/unstyled-components/input-helper"
 import { useExampleHook } from "./api"
+import { TextInput } from "@mantine/core"
+
+const Comp = React.forwardRef<
+  HTMLInputElement,
+  React.InputHTMLAttributes<HTMLInputElement>
+>((props, ref) => {
+  return <input {...props} ref={ref} style={{ background: "orange" }} />
+})
 
 export default function Index() {
-  const { submit, result, Form, fields } = useExampleHook()
+  const { Form, mutate, fields, result } = useExampleHook()
 
   return (
     <div>
       <Form
         onSubmit={({ input }) => {
-          submit({
-            input,
+          mutate({
+            input: {
+              ...input,
+              letters2: "c",
+            },
             csrfToken: "5",
           })
         }}
         style={{ display: "flex", flexDirection: "column", gap: "1rem" }}
       >
         <label>
-          Any old string
-          <input name={fields.anyString.name} defaultValue={"any old string"} />
+          Any old string (do not type "bad message")
+          <InputHelper
+            {...fields.anyString.inputProps}
+            defaultValue={"any old string"}
+            polyComp={TextInput}
+            errorProps={{
+              error: fields.anyString.errors?.[0]?.message,
+            }}
+          />
         </label>
 
         <label>
           Hello world (literal)
-          <input name={fields.helloWorld.name} defaultValue={"hello world"} />
+          <InputHelper
+            {...fields.helloWorld.inputProps}
+            defaultValue={"hello world"}
+          />
         </label>
 
         {/* ZOD UNION OF STRING LITERALS */}
@@ -31,7 +54,7 @@ export default function Index() {
               {radioLabels[option]}
               <input
                 type="radio"
-                name={fields.letters.name}
+                name={fields.letters.inputProps.name}
                 value={option}
                 key={option}
                 defaultChecked={option === "a"}
@@ -41,20 +64,20 @@ export default function Index() {
         })}
 
         {/* ZOD ENUM */}
-        {fields.letters2.options?.map((option) => {
+        {/* {fields.letters2.options?.map((option) => {
           return (
             <label key={option}>
               {radioLabels[option]}
               <input
                 type="radio"
-                name={fields.letters2.name}
+                name={fields.letters2.inputProps.name}
                 value={option}
                 key={option}
                 defaultChecked={option === "b"}
               />
             </label>
           )
-        })}
+        })} */}
 
         {/* ZOD NATIVE ENUM */}
         {fields.letters3.options?.map((option) => {
@@ -63,7 +86,7 @@ export default function Index() {
               {radioLabels[option]}
               <input
                 type="radio"
-                name={fields.letters3.name}
+                name={fields.letters3.inputProps.name}
                 value={option}
                 key={option}
                 defaultChecked={option === "c"}
