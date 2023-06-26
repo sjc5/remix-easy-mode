@@ -12,12 +12,13 @@ import type {
 import { z } from "zod"
 import type { OnResolveProps } from "./use-on-resolve"
 import { useOnResolve } from "./use-on-resolve"
-import { getRemFetcherState } from "../common/common-helpers"
+import { getRemFetcherState } from "../utils/get-rem-fetcher-state"
 import {
   obj_from_fd as objectFromFormData,
   obj_to_fd as objectToFormData,
 } from "@kiruna/form-data"
 import type { FromPromise } from "@kiruna/promises"
+import { optionsFromZodShapeDef } from "../utils/options-from-zod-shape-def"
 
 export type ClientOptions = {
   skipClientValidation?: boolean
@@ -57,22 +58,24 @@ export function useAction<
     [k in Keys]: {
       name: k
       errors: ZodIssue[] | undefined
-      options: Parameters<typeof fn>[0]["input"][k][]
+      options: Parameters<typeof fn>[0]["input"][k][] | undefined
     }
   } = useMemo(() => {
     return Object.fromEntries(
-      keys.map((key) => [
-        key,
-        {
-          name: key,
-          errors: validationErrors?.issues.filter(
-            (issue) => issue.path[0] === key
-          ),
-          options: (schema?.shape as any)[key]?._def?.options?.map(
-            (x: LocalInferred) => x?._def?.value
-          ),
-        },
-      ])
+      keys.map((key) => {
+        const shapeDef = (schema?.shape as any)[key]?._def
+
+        return [
+          key,
+          {
+            name: key,
+            errors: validationErrors?.issues.filter(
+              (issue) => issue.path[0] === key
+            ),
+            options: optionsFromZodShapeDef(shapeDef),
+          },
+        ]
+      })
     ) as any
   }, [validationErrors, keys])
 

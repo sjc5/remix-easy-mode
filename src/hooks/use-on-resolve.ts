@@ -4,7 +4,7 @@ import type {
   handleApiError,
   handleApiSuccess,
 } from "../server/api-responses.server"
-import { getRemFetcherState } from "../common/common-helpers"
+import { getRemFetcherState } from "../utils/get-rem-fetcher-state"
 import type { FromPromise } from "@kiruna/promises"
 
 export const useOnResolve = <Data>({

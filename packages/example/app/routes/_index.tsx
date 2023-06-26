@@ -24,13 +24,46 @@ export default function Index() {
           <input name={fields.helloWorld.name} defaultValue={"hello world"} />
         </label>
 
-        {fields.letters.options.map((option) => {
+        {/* ZOD UNION OF STRING LITERALS */}
+        {fields.letters.options?.map((option) => {
           return (
             <label key={option}>
               {radioLabels[option]}
               <input
                 type="radio"
                 name={fields.letters.name}
+                value={option}
+                key={option}
+                defaultChecked={option === "a"}
+              />
+            </label>
+          )
+        })}
+
+        {/* ZOD ENUM */}
+        {fields.letters2.options?.map((option) => {
+          return (
+            <label key={option}>
+              {radioLabels[option]}
+              <input
+                type="radio"
+                name={fields.letters2.name}
+                value={option}
+                key={option}
+                defaultChecked={option === "a"}
+              />
+            </label>
+          )
+        })}
+
+        {/* ZOD NATIVE ENUM */}
+        {fields.letters3.options?.map((option) => {
+          return (
+            <label key={option}>
+              {radioLabels[option]}
+              <input
+                type="radio"
+                name={fields.letters3.name}
                 value={option}
                 key={option}
                 defaultChecked={option === "a"}
