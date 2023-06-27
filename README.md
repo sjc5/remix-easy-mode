@@ -2,7 +2,7 @@
 
 ## Description
 
-Opinionated toolkit for developing highly interactive, typesafe Remix apps. Built with zod, and inspired by the TRPC / React Query DX (type-safety + react-query style "on settled" mutation callbacks), plus a few extra goodies (such as typesafe form helpers with automatic client-side validations).
+Opinionated toolkit for developing highly interactive, typesafe Remix apps. Built with zod, and inspired by the TRPC / React Query DX (type-safety + react-query style "on settled" mutation callbacks), plus a few extra goodies (such as typesafe forms, input helpers, and automatic client- and server-side validations).
 
 ## Features
 
@@ -29,22 +29,22 @@ Example resource route:
 
 ```tsx
 import type { DataFunctionArgs } from "@remix-run/server-runtime"
-import { data_function_helper, useAction } from "remix-easy-mode"
+import { dataFunctionHelper, useAction } from "remix-easy-mode"
 import { z } from "zod"
 
-const input_schema = z.object({
-  some_user_input: z.string(),
+const schema = z.object({
+  someUserInput: z.string(),
 })
 
 export const action = (ctx: DataFunctionArgs) => {
-  return data_function_helper({
+  return dataFunctionHelper({
     ctx,
-    input_schema,
-    bouncer: async ({ ctx, csrf_token }) => {
+    schema,
+    bouncer: async ({ ctx, csrfToken }) => {
       // do whatever you want here
       // throw an error if something is wrong
     },
-    callback: async ({ input, session }) => {
+    fn: async ({ input, session }) => {
       // do whatever you want here
       return "Wow, that was easy!" as const
     },
@@ -53,10 +53,10 @@ export const action = (ctx: DataFunctionArgs) => {
 
 // return hook from your resource route to use on client
 export const useExampleHook = () => {
-  return useAction<typeof action, typeof input_schema>({
+  return useAction<typeof action, typeof schema>({
     path: "/resource-route",
-    input_schema,
-    on_success: (data) => console.log(data),
+    schema,
+    onSuccess: (data) => console.log(data),
   })
 }
 ```
@@ -64,28 +64,19 @@ export const useExampleHook = () => {
 Example client-side form:
 
 ```tsx
-import { FormHelper, InputHelper } from "remix-easy-mode"
 import { useExampleHook } from "./resource-route"
 
 export default function Index() {
-  const { run, form_props, result } = useExampleHook()
+  const { Form, fields, mutate, result } = useExampleHook()
+
+  const someUserInputErrors = fields.someUserInput.errors
 
   return (
     <div>
-      <FormHelper
-        form_props={form_props}
-        on_submit={({ input }) => {
-          run({ input })
-        }}
-      >
-        <InputHelper
-          form_props={form_props}
-          label="Whatever"
-          name="some_user_input"
-        />
-
+      <Form onSubmit={({ input }) => mutate({ input })}>
+        <input {...fields.someUserInput.inputProps} />
         <button type="submit">Submit</button>
-      </FormHelper>
+      </Form>
 
       <pre>{JSON.stringify(result, null, 2)}</pre>
     </div>
@@ -112,6 +103,3 @@ MIT
 ## Caveats
 
 - This is a work in progress. It's not yet battle-tested, and the API may change without notice. If you want to use this in production, set your dependency to a specific version.
-- This toolkit is really simple and opinionated. It's not for everyone, and that's OK.
-- If you know of smarter ways to do these things without massively overcomplicating the mental model, please let me know!
-- Yep, snake case. You won't talk me out of it.

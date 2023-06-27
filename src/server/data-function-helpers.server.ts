@@ -1,6 +1,6 @@
 import type { DataFunctionArgs } from "@remix-run/server-runtime"
-import { obj_from_ctx } from "./helpers.server"
-import { handle_api_error, handle_api_success } from "./api-responses.server"
+import { objFromCtx } from "./helpers.server"
+import { handleApiError, handleApiSuccess } from "./api-responses.server"
 import type { ZodSchema } from "zod"
 import { z } from "zod"
 import type { FromPromise } from "@kiruna/promises"
@@ -8,156 +8,155 @@ import { SerializationHandlers } from "../hooks/use-action"
 
 export type BouncerProps = {
   ctx: DataFunctionArgs
-  csrf_token: string | undefined
+  csrfToken: string | undefined
 }
 
 type NarrowBouncer<SessionType> = (props: BouncerProps) => Promise<SessionType>
 type BroadBouncer<SessionType> = NarrowBouncer<SessionType> | null | undefined
 
-const parse_input = async <Inferred>({
+const parseInput = async <Inferred>({
   ctx,
-  input_schema,
-  parse_fn,
+  schema,
+  parseFn,
 }: {
   ctx: DataFunctionArgs
-  input_schema: ZodSchema<Inferred>
-  parse_fn: ((input: string) => unknown) | undefined
+  schema: ZodSchema<Inferred>
+  parseFn: ((input: string) => unknown) | undefined
 }) => {
-  const fd = await obj_from_ctx(ctx, parse_fn)
+  const obj = await objFromCtx(ctx, parseFn)
 
   return {
-    parsed_input: input_schema.parse(fd.input),
-    csrf_token: (fd.csrf_token as string) || undefined,
+    parsedInput: schema.parse(obj.input),
+    csrfToken: (obj.csrfToken as string) || undefined,
   }
 }
 
-const run_bouncer = async <Inferred, Bouncer>({
+const runBouncer = async <Inferred, Bouncer>({
   ctx,
   bouncer,
-  csrf_token,
-  parsed_input,
+  csrfToken,
+  parsedInput,
 }: {
   ctx: DataFunctionArgs
   bouncer: NarrowBouncer<Bouncer>
-} & FromPromise<typeof parse_input<Inferred>>) => {
+} & FromPromise<typeof parseInput<Inferred>>) => {
   const session = await bouncer({
     ctx,
-    csrf_token,
+    csrfToken,
   })
 
-  return { session, input: parsed_input }
+  return { session, input: parsedInput }
 }
 
 type DataFunctionHelperOptions = {
-  send_raw_errors?: boolean
-  throw_on_error?: boolean
+  sendRawErrors?: boolean
+  throwOnError?: boolean
 }
 
-export const data_function_helper = async <
+async function dataFunctionHelper<
   InputSchema extends ZodSchema,
-  CallbackRes,
+  FnRes,
   Bouncer
 >({
   ctx,
-  input_schema,
-  callback,
+  schema,
+  fn,
   bouncer,
   headers,
   options,
-  serialization_handlers,
+  serializationHandlers,
 }: {
   ctx: DataFunctionArgs
-  input_schema: InputSchema | null | undefined
-  callback: (
-    props: FromPromise<typeof run_bouncer<z.infer<InputSchema>, Bouncer>>
-  ) => Promise<CallbackRes>
+  schema: InputSchema | null | undefined
+  fn: (
+    props: FromPromise<typeof runBouncer<z.infer<InputSchema>, Bouncer>>
+  ) => Promise<FnRes>
   bouncer: BroadBouncer<Bouncer>
   headers?: Headers
   options?: DataFunctionHelperOptions
-  serialization_handlers?: SerializationHandlers
-}) => {
-  const send_raw_errors = options?.send_raw_errors ?? false
-  const throw_on_error = options?.throw_on_error ?? false
+  serializationHandlers?: SerializationHandlers
+}) {
+  const sendRawErrors = options?.sendRawErrors ?? false
+  const throwOnError = options?.throwOnError ?? false
 
   try {
-    let parse_input_res:
-      | FromPromise<typeof parse_input<z.infer<InputSchema>>>
+    let parseInputRes:
+      | FromPromise<typeof parseInput<z.infer<InputSchema>>>
       | undefined
     try {
-      parse_input_res = await parse_input({
+      parseInputRes = await parseInput({
         ctx,
-        input_schema:
-          input_schema ??
-          (z.any() as unknown as ZodSchema<z.infer<InputSchema>>),
-        parse_fn: serialization_handlers?.parse,
+        schema:
+          schema ?? (z.any() as unknown as ZodSchema<z.infer<InputSchema>>),
+        parseFn: serializationHandlers?.parse,
       })
-    } catch (thrown_res) {
-      if (thrown_res instanceof Error) {
-        if (throw_on_error) {
-          throw thrown_res
+    } catch (thrownRes) {
+      if (thrownRes instanceof Error) {
+        if (throwOnError) {
+          throw thrownRes
         }
 
-        return handle_api_error({
-          error: thrown_res,
-          error_message: send_raw_errors
-            ? thrown_res.message
-            : "Invalid input.",
-          response_init: {
+        return handleApiError({
+          error: thrownRes,
+          errorMessage: sendRawErrors ? thrownRes.message : "Invalid input.",
+          responseInit: {
             status: 400,
           },
         })
       }
 
-      throw thrown_res
+      throw thrownRes
     }
 
     try {
-      const bouncer_res = await run_bouncer({
+      const bouncerRes = await runBouncer({
         ctx,
         bouncer: bouncer ?? (() => Promise.resolve(undefined as Bouncer)),
-        ...parse_input_res,
+        ...parseInputRes,
       })
 
-      return handle_api_success({
-        result: await callback(bouncer_res),
-        response_init: {
+      return handleApiSuccess({
+        result: await fn(bouncerRes),
+        responseInit: {
           headers,
         },
       })
-    } catch (thrown_res) {
-      if (throw_on_error) {
-        throw thrown_res
+    } catch (thrownRes) {
+      if (throwOnError) {
+        throw thrownRes
       }
 
-      if (thrown_res instanceof Error) {
-        return handle_api_error({
-          error: thrown_res,
-          error_message: send_raw_errors ? thrown_res.message : "Unauthorized.",
-          response_init: {
+      if (thrownRes instanceof Error) {
+        return handleApiError({
+          error: thrownRes,
+          errorMessage: sendRawErrors ? thrownRes.message : "Unauthorized.",
+          responseInit: {
             status: 401,
           },
         })
       }
 
-      throw thrown_res
+      throw thrownRes
     }
-  } catch (thrown_res) {
-    if (throw_on_error) {
-      throw thrown_res
+  } catch (thrownRes) {
+    if (throwOnError) {
+      throw thrownRes
     }
 
-    if (thrown_res instanceof Error) {
-      return handle_api_error({
-        error: thrown_res,
-        error_message: send_raw_errors
-          ? thrown_res.message
+    if (thrownRes instanceof Error) {
+      return handleApiError({
+        error: thrownRes,
+        errorMessage: sendRawErrors
+          ? thrownRes.message
           : "Something went wrong.",
-        response_init: {
+        responseInit: {
           status: 500,
         },
       })
     }
 
-    throw thrown_res
+    throw thrownRes
   }
 }
+
+export { dataFunctionHelper }

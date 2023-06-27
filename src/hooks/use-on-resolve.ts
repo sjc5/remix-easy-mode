@@ -1,51 +1,51 @@
 import type { Fetcher } from "@remix-run/react"
 import { useEffect } from "react"
 import type {
-  handle_api_error,
-  handle_api_success,
+  handleApiError,
+  handleApiSuccess,
 } from "../server/api-responses.server"
-import { get_rem_fetcher_state } from "../common/common-helpers"
+import { getRemFetcherState } from "../utils/get-rem-fetcher-state"
 import type { FromPromise } from "@kiruna/promises"
 
 export const useOnResolve = <Data>({
   fetcher,
-  on_success,
-  on_error,
-  on_settled,
+  onSuccess,
+  onError,
+  onSettled,
 }: {
   fetcher: Fetcher
 } & OnResolveProps<Data>) => {
-  const { is_error, is_success } = get_rem_fetcher_state(fetcher)
+  const { isError, isSuccess } = getRemFetcherState(fetcher)
 
-  const is_settled = is_error || is_success
+  const isSettled = isError || isSuccess
 
   useEffect(() => {
-    if (is_success && on_success) {
-      on_success(fetcher.data)
+    if (isSuccess && onSuccess) {
+      onSuccess(fetcher.data)
     }
-    if (is_error && on_error) {
-      on_error(fetcher.data)
+    if (isError && onError) {
+      onError(fetcher.data)
     }
-    if (is_settled && on_settled) {
-      on_settled(fetcher.data)
+    if (isSettled && onSettled) {
+      onSettled(fetcher.data)
     }
   }, [
     fetcher.data,
-    is_error,
-    is_settled,
-    is_success,
-    on_error,
-    on_settled,
-    on_success,
+    isError,
+    isSettled,
+    isSuccess,
+    onError,
+    onSettled,
+    onSuccess,
   ])
 }
 
 export type OnResolveProps<Data> = {
-  on_success?: (data: FromPromise<typeof handle_api_success<Data>>) => void
-  on_error?: (data: FromPromise<typeof handle_api_error>) => void
-  on_settled?: (
+  onSuccess?: (data: FromPromise<typeof handleApiSuccess<Data>>) => void
+  onError?: (data: FromPromise<typeof handleApiError>) => void
+  onSettled?: (
     data:
-      | FromPromise<typeof handle_api_success<Data>>
-      | FromPromise<typeof handle_api_error>
+      | FromPromise<typeof handleApiSuccess<Data>>
+      | FromPromise<typeof handleApiError>
   ) => void
 }

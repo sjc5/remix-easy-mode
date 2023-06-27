@@ -1,37 +1,46 @@
 import type { DataFunctionArgs } from "@remix-run/node"
 import { z } from "zod"
-import { data_function_helper, useAction } from "../../../../index"
+import { dataFunctionHelper, useAction } from "../../../../index"
+// import { dataFunctionHelper, useAction } from "remix-easy-mode"
+
 import { bouncer } from "../bouncer"
 
-const input_schema = z.object({
-  any_string: z.string().refine((val) => val !== "bad message", {
+const schema = z.object({
+  anyString: z.string().refine((val) => val !== "bad message", {
     message: `Oops, you weren't supposed to write that!`,
   }),
-  hello_world: z.literal("hello world"),
-  letters: z.union([z.literal("a"), z.literal("b"), z.literal("c")]),
+  helloWorld: z.literal("hello world"),
+
+  // any of these work for radio inputs
+  letters: z.union([z.literal(1), z.literal(2), z.literal(3)]),
+  letters2: z.enum(["1", "2", "3"]),
+
+  someNumber: z.number().refine((val) => val > 0, {
+    message: "Must be greater than 0",
+  }),
 })
 
 export const action = (ctx: DataFunctionArgs) => {
-  return data_function_helper({
+  return dataFunctionHelper({
     ctx,
-    input_schema,
+    schema,
     bouncer,
-    callback: async ({ input, session }) => {
-      const status_text = session.user
+    fn: async ({ input, session }) => {
+      const statusText = session.user
         ? `logged in as user ${session.user.id}`
         : "not logged in"
 
-      return `You are ${status_text}. You typed: ${input.any_string}.` as const
+      return `You are ${statusText}. You typed: ${input.anyString}.` as const
     },
   })
 }
 
 export const useExampleHook = () => {
-  return useAction<typeof action, typeof input_schema>({
+  return useAction<typeof action, typeof schema>({
     path: "/api",
-    input_schema,
-    on_success: (result) => {
-      console.log("Jerry", result.data)
+    schema,
+    onSuccess: (successRes) => {
+      console.log("from useAction onSuccess!", successRes)
     },
   })
 }

@@ -1,13 +1,21 @@
 import type { DataFunctionArgs } from "@remix-run/server-runtime"
-import { obj_from_fd } from "@kiruna/form-data"
+import { obj_from_fd as objectFromFormData } from "@kiruna/form-data"
 
-export const obj_from_ctx = async (
+async function objFromCtx(
   ctx: DataFunctionArgs,
-  parse_fn?: (input: string) => unknown
-) => {
+  parseFn?: (input: string) => unknown
+) {
   if (ctx.request.method === "GET") {
     return ctx.params
   }
-  const fd = await ctx.request.formData()
-  return obj_from_fd(fd, parse_fn)
+  try {
+    const json = await ctx.request.json()
+    if (parseFn) return parseFn(json)
+    return json
+  } catch (e) {
+    const formData = await ctx.request.formData()
+    return objectFromFormData(formData, parseFn)
+  }
 }
+
+export { objFromCtx }

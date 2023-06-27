@@ -1,6 +1,6 @@
 {
   "name": "remix-easy-mode",
-  "version": "0.0.24",
+  "version": "0.1.0-beta.5",
   "author": {
     "name": "Sam Cook",
     "email": "email@samcook.cc",
@@ -16,13 +16,12 @@
   ],
   "dependencies": {
     "@kiruna/form-data": "0.0.0-alpha.7",
-    "@kiruna/promises": "0.0.0-alpha.7",
-    "@kiruna/zod": "0.0.0-alpha.8"
+    "@kiruna/promises": "0.0.0-alpha.7"
   },
   "devDependencies": {
-    "@remix-run/eslint-config": "^1.15.0",
-    "@remix-run/react": "^1.15.0",
-    "@remix-run/server-runtime": "^1.15.0",
+    "@remix-run/eslint-config": "^1.18.0",
+    "@remix-run/react": "^1.18.0",
+    "@remix-run/server-runtime": "^1.18.0",
     "@types/react": "^18.0.33",
     "eslint": "^8.38.0",
     "react": "^18.2.0",
@@ -32,9 +31,9 @@
     "zod": "^3.21.4"
   },
   "peerDependencies": {
-    "@remix-run/react": "^1.15.0",
-    "@remix-run/server-runtime": "^1.15.0",
-    "react": "^17 || ^18",
+    "@remix-run/react": "^1.18.0",
+    "@remix-run/server-runtime": "^1.18.0",
+    "react": "^18",
     "zod": "^3"
   },
   "scripts": {
@@ -46,7 +45,7 @@
     "type": "git",
     "url": "git+https://github.com/sjc5/remix-easy-mode.git"
   },
-  "homepage": "https://github.com/sjc5/remix-easy-mode#readme",
+  "homepage": "https://github.com/sjc5/remix-easy-mode",
   "bugs": "https://github.com/sjc5/remix-easy-mode/issues",
   "keywords": [
     "remix",
