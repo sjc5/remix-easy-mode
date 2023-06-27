@@ -64,6 +64,7 @@ export const useExampleHook = () => {
 Example client-side form:
 
 ```tsx
+import { InputHelper } from "remix-easy-mode"
 import { useExampleHook } from "./resource-route"
 
 export default function Index() {
@@ -74,7 +75,10 @@ export default function Index() {
   return (
     <div>
       <Form onSubmit={({ input }) => mutate({ input })}>
-        <input {...fields.someUserInput.inputProps} />
+        <InputHelper
+          {...fields.someUserInput.inputProps}
+          polyComp={StyledInput}
+        />
         <button type="submit">Submit</button>
       </Form>
 
