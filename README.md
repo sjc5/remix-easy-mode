@@ -109,6 +109,6 @@ Then visit `localhost:3000`.
 
 MIT
 
-## Caveats
+## Disclaimer
 
-- This is a work in progress. It's not yet battle-tested, and the API may change without notice. If you want to use this in production, set your dependency to a specific version.
+This is a work in progress. It's not yet battle-tested, and the API may change without notice. If you want to use this in production, set your dependency to a specific version.
