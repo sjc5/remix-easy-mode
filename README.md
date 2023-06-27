@@ -13,7 +13,9 @@ It's really awesome, and you should try it out!
 - Typesafe session middleware support (via "bouncer" pattern)
 - Typesafe session and input values passed to server-side callbacks
 - Automatic error handling and error message display
-- Component helpers are unstyled, so you can style them however you want
+- Input helpers are unstyled and polymorphic if you want to supply your own input component
+
+Think of it a bit like TRPC for Remix, only forms are way easier / handier with remix-easy-mode.
 
 ## Installation
 
