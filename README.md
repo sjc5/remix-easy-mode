@@ -4,6 +4,8 @@
 
 Opinionated toolkit for developing highly interactive, typesafe Remix apps. Built with zod, and inspired by the TRPC / React Query DX (type-safety + react-query style "on settled" mutation callbacks), plus a few extra goodies (such as typesafe forms, input helpers, and automatic client- and server-side validations).
 
+It's really awesome, and you should try it out!
+
 ## Features
 
 - Automatic form validations (client-side and server-side)
@@ -66,6 +68,7 @@ Example client-side form:
 ```tsx
 import { InputHelper } from "remix-easy-mode"
 import { useExampleHook } from "./resource-route"
+import { StyledInput } from "./some-styled-input"
 
 export default function Index() {
   const { Form, fields, mutate, result } = useExampleHook()
@@ -74,7 +77,7 @@ export default function Index() {
 
   return (
     <div>
-      <Form onSubmit={({ input }) => mutate({ input })}>
+      <Form onSubmit={mutate}>
         <InputHelper
           {...fields.someUserInput.inputProps}
           polyComp={StyledInput}
