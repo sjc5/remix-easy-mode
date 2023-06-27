@@ -2,7 +2,7 @@
 
 ## Description
 
-Opinionated toolkit for developing highly interactive, typesafe Remix apps. Built with zod, and inspired by the TRPC / React Query DX (type-safety + react-query style "on settled" mutation callbacks), plus a few extra goodies (such as typesafe form helpers with automatic client-side validations).
+Opinionated toolkit for developing highly interactive, typesafe Remix apps. Built with zod, and inspired by the TRPC / React Query DX (type-safety + react-query style "on settled" mutation callbacks), plus a few extra goodies (such as typesafe forms, input helpers, and automatic client- and server-side validations).
 
 ## Features
 
@@ -67,12 +67,14 @@ Example client-side form:
 import { useExampleHook } from "./resource-route"
 
 export default function Index() {
-  const { Form, fields, submit, result } = useExampleHook()
+  const { Form, fields, mutate, result } = useExampleHook()
+
+  const someUserInputErrors = fields.someUserInput.errors
 
   return (
     <div>
-      <Form onSubmit={({ input }) => submit({ input })}>
-        <input name={fields.someUserInput.name} />
+      <Form onSubmit={({ input }) => mutate({ input })}>
+        <input {...fields.someUserInput.inputProps} />
         <button type="submit">Submit</button>
       </Form>
 
