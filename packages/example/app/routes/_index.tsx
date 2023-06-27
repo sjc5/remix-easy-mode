@@ -20,17 +20,10 @@ export default function Index() {
           mutate({
             input: {
               ...input,
-              letters2: "c",
             },
             csrfToken: "5",
             onSuccess: (successRes) => {
               console.log("from mutate onSuccess!", successRes)
-            },
-            onError: (errorRes) => {
-              console.log("from mutate onError!", errorRes)
-            },
-            onSettled: (settledRes) => {
-              console.log("from mutate onSettled!", settledRes)
             },
           })
         }}
@@ -60,49 +53,37 @@ export default function Index() {
         {fields.letters.options?.map((option) => {
           return (
             <label key={option}>
-              {radioLabels[option]}
-              <input
+              {option}
+              <InputHelper
                 type="radio"
-                name={fields.letters.inputProps.name}
+                {...fields.letters.inputProps}
                 value={option}
-                key={option}
-                defaultChecked={option === "a"}
+                defaultChecked={option === 2}
               />
             </label>
           )
         })}
 
         {/* ZOD ENUM */}
-        {/* {fields.letters2.options?.map((option) => {
+        {fields.letters2.options?.map((option) => {
           return (
             <label key={option}>
-              {radioLabels[option]}
-              <input
+              {option}
+              <InputHelper
                 type="radio"
-                name={fields.letters2.inputProps.name}
+                {...fields.letters2.inputProps}
                 value={option}
-                key={option}
-                defaultChecked={option === "b"}
-              />
-            </label>
-          )
-        })} */}
-
-        {/* ZOD NATIVE ENUM */}
-        {fields.letters3.options?.map((option) => {
-          return (
-            <label key={option}>
-              {radioLabels[option]}
-              <input
-                type="radio"
-                name={fields.letters3.inputProps.name}
-                value={option}
-                key={option}
-                defaultChecked={option === "c"}
+                defaultChecked={option === "1"}
               />
             </label>
           )
         })}
+
+        <InputHelper
+          type="number"
+          {...fields.someNumber.inputProps}
+          defaultValue={0}
+        />
 
         <button type="submit">Submit</button>
       </Form>
@@ -111,9 +92,3 @@ export default function Index() {
     </div>
   )
 }
-
-const radioLabels = {
-  a: "A",
-  b: "B",
-  c: "C",
-} as const

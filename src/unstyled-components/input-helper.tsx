@@ -16,35 +16,38 @@ function InputHelper<
   polyComp?: C
 } & React.ComponentPropsWithoutRef<C> &
   InputHelperProps<T, N>) {
+  const ref = useRef<HTMLInputElement>(null)
+  const isCheckedOrSelected = ref.current?.checked ?? false
+  const isCheckbox = props.type === "checkbox"
+
   const [valueState, setValueState] = useState(
-    props.type === "checkbox"
-      ? props.defaultChecked ?? false
-      : props.defaultValue ?? ""
+    isCheckbox
+      ? props.defaultChecked ?? props.checked ?? false
+      : props.defaultValue ?? props.value ?? ""
   )
 
+  const stringifyToUse = useMemo(() => {
+    return stringifyFn ?? JSON.stringify
+  }, [stringifyFn])
+
   const inputValue = useMemo(() => {
-    const toBeStringified =
-      props.type === "checkbox" ? ref.current?.checked ?? false : valueState
+    const toBeStringified = isCheckbox ? isCheckedOrSelected : valueState
 
-    return stringifyFn
-      ? stringifyFn(toBeStringified)
-      : JSON.stringify(toBeStringified)
+    return stringifyToUse(
+      props.type === "number" ? Number(toBeStringified) : toBeStringified
+    )
   }, [stringifyFn, valueState, props.type])
-
-  const ref = useRef<HTMLInputElement>(null)
 
   const Comp = useMemo(() => Component ?? "input", [Component])
 
   return (
     <>
-      <input name={name} type="hidden" value={inputValue} />
+      {<input name={name} type="hidden" value={inputValue} />}
 
       <Comp
         {...props}
         onChange={(e) => {
-          setValueState(
-            props.type === "checkbox" ? e.target.checked : e.target.value
-          )
+          setValueState(isCheckbox ? e.target.checked : e.target.value)
           props.onChange?.(e)
         }}
         ref={ref}

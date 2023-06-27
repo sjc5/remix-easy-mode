@@ -7,10 +7,7 @@ import { z } from "zod"
 import type { OnResolveProps } from "./use-on-resolve"
 import { useOnResolve } from "./use-on-resolve"
 import { getRemFetcherState } from "../utils/get-rem-fetcher-state"
-import {
-  obj_from_fd as objectFromFormData,
-  obj_to_fd as objectToFormData,
-} from "@kiruna/form-data"
+import { obj_from_fd as objectFromFormData } from "@kiruna/form-data"
 import type { FromPromise } from "@kiruna/promises"
 import { optionsFromZodShapeDef } from "../utils/options-from-zod-shape-def"
 
@@ -137,22 +134,25 @@ export function useAction<
         }
 
         setValidationErrors(parsedInput.error)
+
+        // stop the onResolve from running again
+        setOnResolve({})
         return
       } else {
         setValidationErrors(undefined)
       }
 
+      const stringifier = serializationHandlers?.stringify ?? JSON.stringify
+
       fetcher.submit(
-        objectToFormData(
-          {
-            csrfToken: props.csrfToken,
-            input: parsedInput.data,
-          },
-          serializationHandlers?.stringify
-        ),
+        stringifier({
+          csrfToken: props.csrfToken,
+          input: parsedInput.data,
+        }),
         {
           method: "post",
           action: path,
+          encType: "application/json",
         }
       )
     },
@@ -176,17 +176,14 @@ export function useAction<
         <form
           onSubmit={(e) => {
             e.preventDefault()
+            const formData = new FormData(e.target as HTMLFormElement)
 
-            const fd = new FormData(e.target as HTMLFormElement)
             const input = objectFromFormData(
-              fd,
+              formData,
               serializationHandlers?.parse
             ) as LocalInferred
 
-            onSubmit({
-              input,
-              e,
-            })
+            onSubmit({ input, e })
           }}
           {...props}
         >

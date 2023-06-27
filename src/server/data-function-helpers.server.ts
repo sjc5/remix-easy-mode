@@ -23,11 +23,11 @@ const parseInput = async <Inferred>({
   schema: ZodSchema<Inferred>
   parseFn: ((input: string) => unknown) | undefined
 }) => {
-  const fd = await objFromCtx(ctx, parseFn)
+  const obj = await objFromCtx(ctx, parseFn)
 
   return {
-    parsedInput: schema.parse(fd.input),
-    csrfToken: (fd.csrfToken as string) || undefined,
+    parsedInput: schema.parse(obj.input),
+    csrfToken: (obj.csrfToken as string) || undefined,
   }
 }
 

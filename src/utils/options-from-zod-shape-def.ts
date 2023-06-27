@@ -1,6 +1,6 @@
-import type { ZodEnumDef, ZodNativeEnumDef, ZodTypeDef, ZodUnionDef } from "zod"
+import type { ZodEnumDef, ZodTypeDef, ZodUnionDef } from "zod"
 
-type TargetRadioZodDefs = ZodUnionDef | ZodEnumDef | ZodNativeEnumDef
+type TargetRadioZodDefs = ZodUnionDef | ZodEnumDef
 
 function optionsFromZodShapeDef(zodTypeDef: ZodTypeDef | undefined) {
   try {
@@ -17,10 +17,6 @@ function optionsFromZodShapeDef(zodTypeDef: ZodTypeDef | undefined) {
 
     if (isZodEnumDef(zodTypeDef)) {
       return zodTypeDef.values
-    }
-
-    if (isZodNativeEnumDef(zodTypeDef)) {
-      return Object.values(zodTypeDef?.values)
     }
   } catch (ignore) {
     console.error("Error in optionsFromZodShapeDef.")
@@ -43,8 +39,4 @@ function isZodUnionDef(x: TargetRadioZodDefs): x is ZodUnionDef {
 
 function isZodEnumDef(x: TargetRadioZodDefs): x is ZodEnumDef {
   return x.typeName === "ZodEnum"
-}
-
-function isZodNativeEnumDef(x: TargetRadioZodDefs): x is ZodNativeEnumDef {
-  return x.typeName === "ZodNativeEnum"
 }

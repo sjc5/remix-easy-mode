@@ -8,8 +8,14 @@ async function objFromCtx(
   if (ctx.request.method === "GET") {
     return ctx.params
   }
-  const fd = await ctx.request.formData()
-  return objectFromFormData(fd, parseFn)
+  try {
+    const json = await ctx.request.json()
+    if (parseFn) return parseFn(json)
+    return json
+  } catch (e) {
+    const formData = await ctx.request.formData()
+    return objectFromFormData(formData, parseFn)
+  }
 }
 
 export { objFromCtx }
