@@ -11,30 +11,21 @@ const Comp = React.forwardRef<
 })
 
 export default function Index() {
-  const { Form, mutate, fields, result } = useExampleHook()
+  const { Form, fields, result } = useExampleHook()
 
   return (
     <div>
       <Form
-        onSubmit={({ input }) => {
-          mutate({
-            input: {
-              ...input,
-            },
-            csrfToken: "5",
-            onSuccess: (successRes) => {
-              console.log("from mutate onSuccess!", successRes)
-            },
-          })
-        }}
+        csrfToken="5"
+        onSuccess={(successRes) => console.log("form onSuccess", successRes)}
         style={{ display: "flex", flexDirection: "column", gap: "1rem" }}
       >
         <label>
           Any old string (do not type "bad message")
           <InputHelper
-            {...fields.anyString.inputProps}
+            {...fields.anyString.props}
             defaultValue={"any old string"}
-            polyComp={TextInput}
+            component={TextInput}
             errorProps={{
               error: fields.anyString.errors?.[0]?.message,
             }}
@@ -44,7 +35,7 @@ export default function Index() {
         <label>
           Hello world (literal)
           <InputHelper
-            {...fields.helloWorld.inputProps}
+            {...fields.helloWorld.props}
             defaultValue={"hello world"}
           />
         </label>
@@ -56,7 +47,7 @@ export default function Index() {
               {option}
               <InputHelper
                 type="radio"
-                {...fields.letters.inputProps}
+                {...fields.letters.props}
                 value={option}
                 defaultChecked={option === 2}
               />
@@ -71,7 +62,7 @@ export default function Index() {
               {option}
               <InputHelper
                 type="radio"
-                {...fields.letters2.inputProps}
+                {...fields.letters2.props}
                 value={option}
                 defaultChecked={option === "1"}
               />
@@ -81,7 +72,7 @@ export default function Index() {
 
         <InputHelper
           type="number"
-          {...fields.someNumber.inputProps}
+          {...fields.someNumber.props}
           defaultValue={0}
         />
 

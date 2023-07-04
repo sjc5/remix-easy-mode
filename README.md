@@ -73,17 +73,14 @@ import { useExampleHook } from "./resource-route"
 import { StyledInput } from "./some-styled-input"
 
 export default function Index() {
-  const { Form, fields, mutate, result } = useExampleHook()
+  const { Form, fields, result } = useExampleHook()
 
   const someUserInputErrors = fields.someUserInput.errors
 
   return (
     <div>
-      <Form onSubmit={mutate}>
-        <InputHelper
-          {...fields.someUserInput.inputProps}
-          polyComp={StyledInput}
-        />
+      <Form>
+        <InputHelper {...fields.someUserInput.props} component={StyledInput} />
         <button type="submit">Submit</button>
       </Form>
 
