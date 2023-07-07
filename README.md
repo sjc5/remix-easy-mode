@@ -11,21 +11,17 @@ It's really awesome, and you should try it out!
 - Automatic form validations (client-side and server-side)
 - Typesafe form inputs and data responses via helper components / hooks
 - Typesafe session middleware support (via "bouncer" pattern)
-- Typesafe session and input values passed to server-side callbacks
-- Automatic error handling and error message display
-- Input helpers are unstyled and polymorphic if you want to supply your own input component
+- Typesafe session and input values passed to server-side callbacks, similar to TRPC
+- TanStack Query style "on settled" callbacks
+- Input helpers are unstyled (and polymorphic, if you want to supply your own input component)
 
-Think of it a bit like TRPC for Remix, only forms are way easier / handier with remix-easy-mode.
+Think of it like TRPC for Remix, except that the overall experience is a bit easier and handier, without giving up too much flexibility. Hence, "Remix Easy Mode".
 
 ## Installation
 
 ```bash
 npm i remix-easy-mode zod
 ```
-
-## Video Tutorial
-
-https://www.youtube.com/watch?v=CxrtfHbXKuM
 
 ## Usage
 
@@ -79,8 +75,12 @@ export default function Index() {
 
   return (
     <div>
-      <Form>
+      <Form
+        csrfToken="whatever" // optional
+        onSuccess={(res) => console.log("typesafe!", res)}
+      >
         <InputHelper {...fields.someUserInput.props} component={StyledInput} />
+
         <button type="submit">Submit</button>
       </Form>
 
@@ -108,4 +108,4 @@ MIT
 
 ## Disclaimer
 
-This is a work in progress. It's not yet battle-tested, and the API may change without notice. If you want to use this in production, set your dependency to a specific version.
+This is a work in progress. It's not yet battle-tested, and the pre-1.0.0 API will change without notice. If you want to use this in production, set your dependency to a specific version.
