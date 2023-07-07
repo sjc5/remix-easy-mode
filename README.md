@@ -1,19 +1,16 @@
 # Remix Easy Mode
 
-## Description
-
 Simple toolkit for developing highly interactive, typesafe Remix apps.
 
 ## Features
 
-- Built with zod
-- Inspired by TRPC / TanStack Query
+- Built on zod — inspired by TRPC / TanStack Query / T3-app DX
 - 100% typesafe
 - Designed to be used in highly interactive apps
-- Automatic client- and server-side form validations
-- Typesafe session middleware support (via "bouncer" pattern)
-- Typesafe session and input values passed to server-side callbacks, similar to TRPC
-- TanStack Query style "on settled" mutation callbacks (e.g., `onSuccess`, `onError`, `onSettled`)
+- Automatic client-side form validations
+- Server-side input validations _a la_ TRPC
+- Session middleware via "bouncer" pattern
+- `onSuccess`, `onError`, and `onSettled` mutation callbacks
 - Input helpers are unstyled (and polymorphic, if you want to supply your own input component)
 
 ## Installation
