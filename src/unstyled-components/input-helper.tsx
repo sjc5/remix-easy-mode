@@ -8,12 +8,12 @@ function InputHelper<
   C extends React.ForwardRefExoticComponent<any>
 >({
   name,
-  polyComp: Component,
+  component: Component,
   schema,
   stringifyFn,
   ...props
 }: {
-  polyComp?: C
+  component?: C
 } & React.ComponentPropsWithoutRef<C> &
   InputHelperProps<T, N>) {
   const ref = useRef<HTMLInputElement>(null)
@@ -62,12 +62,12 @@ function TextAreaHelper<
   C extends React.ForwardRefExoticComponent<any>
 >({
   name,
-  polyComp: Component,
+  component: Component,
   schema,
   stringifyFn,
   ...props
 }: {
-  polyComp?: C
+  component?: C
 } & React.ComponentPropsWithoutRef<C> &
   TextAreaHelperProps<T, N>) {
   const [valueState, setValueState] = useState(props.defaultValue ?? "")

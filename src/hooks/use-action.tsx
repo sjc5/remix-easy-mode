@@ -46,7 +46,7 @@ export function useAction<
     [k in Keys]: {
       errors: ZodIssue[] | undefined
       options: Parameters<typeof mutate>[0]["input"][k][] | undefined
-      inputProps: {
+      props: {
         schema: typeof schema
         stringifyFn: SerializationHandlers["stringify"] | undefined
         name: k
@@ -66,7 +66,7 @@ export function useAction<
               (issue) => issue.path[0] === key
             ),
             options: optionsFromZodShapeDef(shapeDef),
-            inputProps: {
+            props: {
               schema,
               stringifyFn: serializationHandlers?.stringify,
               name: key,
@@ -90,11 +90,13 @@ export function useAction<
     ...onResolve,
   })
 
+  type OnResolvePropsLocal = OnResolveProps<
+    NonNullable<FromPromise<Action>["data"]>
+  >
+
   const mutate = useCallback(
     async (
-      props: { input: LocalInferred } & OnResolveProps<
-        NonNullable<FromPromise<Action>["data"]>
-      > & {
+      props: { input: LocalInferred } & OnResolvePropsLocal & {
           csrfToken?: string
         } & {
           options?: ClientOptions
@@ -162,16 +164,24 @@ export function useAction<
   const Form = useMemo(() => {
     return function Form({
       onSubmit,
+      csrfToken,
+      onSuccess,
+      onError,
+      onSettled,
       ...props
     }: {
-      onSubmit: ({
+      onSubmit?: ({
         input,
         e,
+        onResolveProps,
       }: {
         input: LocalInferred
         e: React.FormEvent<HTMLFormElement>
+        onResolveProps: OnResolvePropsLocal
       }) => void
-    } & Omit<React.FormHTMLAttributes<HTMLFormElement>, "onSubmit">) {
+      csrfToken?: string
+    } & OnResolvePropsLocal &
+      Omit<React.FormHTMLAttributes<HTMLFormElement>, "onSubmit">) {
       return (
         <form
           onSubmit={(e) => {
@@ -183,7 +193,17 @@ export function useAction<
               serializationHandlers?.parse
             ) as LocalInferred
 
-            onSubmit({ input, e })
+            const onResolveProps = { onError, onSuccess, onSettled }
+
+            if (onSubmit) {
+              return onSubmit({ input, e, onResolveProps })
+            }
+
+            return mutate({
+              input,
+              csrfToken,
+              ...onResolveProps,
+            })
           }}
           {...props}
         >
