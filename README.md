@@ -10,14 +10,15 @@ The DX is awesome — you should try it out!
 
 ## Features
 
-- Automatic form validations (client-side and server-side)
-- Typesafe form inputs and data responses via helper components / hooks
+- Built with zod
+- Inspired by TRPC / TanStack Query
+- 100% typesafe
+- Designed to be used in highly interactive apps
+- Automatic client- and server-side form validations
 - Typesafe session middleware support (via "bouncer" pattern)
 - Typesafe session and input values passed to server-side callbacks, similar to TRPC
-- TanStack Query style "on settled" callbacks
+- TanStack Query style "on settled" callbacks (e.g., `onSuccess`, `onError`, `onSettled`)
 - Input helpers are unstyled (and polymorphic, if you want to supply your own input component)
-
-Think of it like TRPC for Remix, except that the overall experience is a bit easier and handier, without giving up too much flexibility. Hence, "Remix Easy Mode".
 
 ## Installation
 
@@ -38,6 +39,7 @@ const schema = z.object({
   someUserInput: z.string(),
 })
 
+// this is like a TRPC procedure
 export const action = (ctx: DataFunctionArgs) => {
   return dataFunctionHelper({
     ctx,
@@ -68,7 +70,7 @@ Example client-side form:
 ```tsx
 import { InputHelper } from "remix-easy-mode"
 import { useExampleHook } from "./resource-route"
-import { StyledInput } from "./some-styled-input"
+import { StyledInput } from "./your-custom-input-component"
 
 export default function Index() {
   const { Form, fields, result } = useExampleHook()
