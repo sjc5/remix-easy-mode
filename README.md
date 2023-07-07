@@ -12,8 +12,8 @@ Simple, typesafe toolkit for developing highly interactive Remix apps
 - Server-side input validations _a la_ TRPC
 - Session middleware via "bouncer" pattern
 - `onSuccess`, `onError`, and `onSettled` mutation callbacks _a la_ react-query
-- Input helpers are unstyled (and polymorphic, if you want to supply your own input component)
-- Optional custom serializers (_e.g._, superjson)
+- Input helpers are unstyled (and polymorphic, if you want to supply your own input components)
+- Optional custom serializers (_e.g._, `superjson`)
 - MIT licensed
 
 ## Installation
@@ -24,7 +24,7 @@ npm i remix-easy-mode zod
 
 ## Usage
 
-Example resource route:
+### Resource Route
 
 ```tsx
 import type { DataFunctionArgs } from "@remix-run/server-runtime"
@@ -57,7 +57,7 @@ export function useExample() {
 }
 ```
 
-Example client-side form:
+### Client-side Form
 
 ```tsx
 import { InputHelper } from "remix-easy-mode"
