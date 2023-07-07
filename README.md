@@ -68,9 +68,7 @@ import { useExampleHook } from "./resource-route"
 import { StyledInput } from "./your-custom-input-component"
 
 export default function Index() {
-  const { Form, fields, result } = useExampleHook()
-
-  const someUserInputErrors = fields.someUserInput.errors
+  const { Form, fields } = useExampleHook()
 
   return (
     <div>
@@ -80,10 +78,8 @@ export default function Index() {
       >
         <InputHelper {...fields.someUserInput.props} component={StyledInput} />
 
-        <button type="submit">Submit</button>
+        <button>Submit</button>
       </Form>
-
-      <pre>{JSON.stringify(result, null, 2)}</pre>
     </div>
   )
 }
