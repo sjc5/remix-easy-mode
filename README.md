@@ -40,13 +40,9 @@ export const action = (ctx: DataFunctionArgs) => {
     ctx,
     schema,
     bouncer: async ({ ctx, csrfToken }) => {
-      // do whatever you want here
-      // throw an error if something is wrong
+      // (1) throw error or (2) return user session
     },
-    fn: async ({ input, session }) => {
-      // do whatever you want here
-      return "Wow, that was easy!" as const
-    },
+    fn: async ({ input, session }) => console.log({ input, session }), // typesafe!,
   })
 }
 
@@ -55,7 +51,7 @@ export const useExampleHook = () => {
   return useAction<typeof action, typeof schema>({
     path: "/resource-route",
     schema,
-    onSuccess: (data) => console.log(data),
+    onSuccess: (data) => console.log(data), // typesafe!,
   })
 }
 ```
@@ -74,7 +70,7 @@ export default function Index() {
     <div>
       <Form
         csrfToken="whatever" // optional
-        onSuccess={(res) => console.log("typesafe!", res)}
+        onSuccess={(res) => console.log(res)} // typesafe!
       >
         <InputHelper {...fields.someUserInput.props} component={StyledInput} />
 
