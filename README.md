@@ -1,6 +1,6 @@
 # Remix Easy Mode
 
-Simple, typesafe toolkit for developing highly interactive Remix apps. Inspired by TRPC.
+Simple, typesafe toolkit for developing highly interactive Remix apps
 
 ## Features
 
