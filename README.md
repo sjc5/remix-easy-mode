@@ -1,12 +1,12 @@
 # Remix Easy Mode
 
-Simple, typesafe toolkit for developing highly interactive Remix apps.
+Simple, typesafe toolkit for developing highly interactive Remix apps. Inspired by TRPC.
 
 ## Features
 
 - 100% typesafe
 - Built on zod
-- Inspired by TRPC / react-query developer experience
+- Inspired by TRPC
 - Designed for building highly interactive apps
 - Automatic client-side form validations
 - Server-side input validations _a la_ TRPC
