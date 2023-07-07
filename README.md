@@ -4,10 +4,6 @@
 
 Simple toolkit for developing highly interactive, typesafe Remix apps.
 
-Built with zod, and inspired by the TRPC / React Query DX (type-safety + react-query style "on settled" mutation callbacks), plus a few extra goodies (such as typesafe forms, input helpers, and automatic client- and server-side validations).
-
-The DX is awesome — you should try it out!
-
 ## Features
 
 - Built with zod
@@ -17,7 +13,7 @@ The DX is awesome — you should try it out!
 - Automatic client- and server-side form validations
 - Typesafe session middleware support (via "bouncer" pattern)
 - Typesafe session and input values passed to server-side callbacks, similar to TRPC
-- TanStack Query style "on settled" callbacks (e.g., `onSuccess`, `onError`, `onSettled`)
+- TanStack Query style "on settled" mutation callbacks (e.g., `onSuccess`, `onError`, `onSettled`)
 - Input helpers are unstyled (and polymorphic, if you want to supply your own input component)
 
 ## Installation
