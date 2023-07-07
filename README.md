@@ -96,8 +96,7 @@ Then visit `localhost:3000`.
 
 ## Peer Dependencies
 
-- Remix
-- Zod
+`react`, `@remix-run/react`, `@remix-run/server-runtime`, `zod`
 
 ## Disclaimer
 
