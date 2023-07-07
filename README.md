@@ -13,7 +13,7 @@ Simple, typesafe toolkit for developing highly interactive Remix apps
 - Session middleware via "bouncer" pattern
 - `onSuccess`, `onError`, and `onSettled` mutation callbacks _a la_ react-query
 - Input helpers are unstyled (and polymorphic, if you want to supply your own input component)
-- Optional custom serializers
+- Optional custom serializers (_e.g._, superjson)
 - MIT licensed
 
 ## Installation
