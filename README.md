@@ -103,4 +103,4 @@ Then visit `localhost:3000`.
 
 ## Disclaimer
 
-This is a work in progress. It's not yet battle-tested, and the pre-1.0.0 API will change without notice. If you want to use this in production, set your dependency to a specific version.
+This is a work in progress. It's not yet battle-tested, and the pre-1.0.0 API will change without notice. If you want to use this in production, be careful, and set your dependency to a specific version.
