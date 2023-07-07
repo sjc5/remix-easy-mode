@@ -1,10 +1,12 @@
-# remix-easy-mode
+# Remix Easy Mode
 
 ## Description
 
-Simple toolkit for developing highly interactive, typesafe Remix apps. Built with zod, and inspired by the TRPC / React Query DX (type-safety + react-query style "on settled" mutation callbacks), plus a few extra goodies (such as typesafe forms, input helpers, and automatic client- and server-side validations).
+Simple toolkit for developing highly interactive, typesafe Remix apps.
 
-It's really awesome, and you should try it out!
+Built with zod, and inspired by the TRPC / React Query DX (type-safety + react-query style "on settled" mutation callbacks), plus a few extra goodies (such as typesafe forms, input helpers, and automatic client- and server-side validations).
+
+The DX is awesome — you should try it out!
 
 ## Features
 
