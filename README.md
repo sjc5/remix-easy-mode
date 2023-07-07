@@ -1,12 +1,13 @@
 # Remix Easy Mode
 
-Simple toolkit for developing highly interactive, typesafe Remix apps.
+Simple, typesafe toolkit for developing highly interactive Remix apps.
 
 ## Features
 
-- Built on zod — inspired by TRPC / TanStack Query / T3-app DX
+- Built with zod
+- Inspired by TRPC / React Query developer experience
 - 100% typesafe
-- Designed to be used in highly interactive apps
+- Designed for building highly interactive apps
 - Automatic client-side form validations
 - Server-side input validations _a la_ TRPC
 - Session middleware via "bouncer" pattern
