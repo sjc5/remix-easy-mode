@@ -49,26 +49,22 @@
   "bugs": "https://github.com/sjc5/remix-easy-mode/issues",
   "keywords": [
     "remix",
-    "hooks",
-    "toolkit",
     "typescript",
     "typesafe",
-    "api",
     "zod",
-    "easy mode",
+    "api",
+    "react",
     "query",
     "mutation",
     "action",
     "loader",
-    "form",
+    "forms",
     "validation",
     "form validation",
+    "trpc",
     "bouncer",
     "session",
-    "middleware",
-    "zod",
-    "libary",
-    "framework"
+    "middleware"
   ],
   "sideEffects": false
 }
