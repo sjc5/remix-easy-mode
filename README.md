@@ -47,11 +47,11 @@ export const action = (ctx: DataFunctionArgs) => {
 }
 
 // return hook from your resource route to use on client
-export const useExampleHook = () => {
+export function useExample() {
   return useAction<typeof action, typeof schema>({
     path: "/resource-route",
     schema,
-    onSuccess: (data) => console.log(data), // typesafe!,
+    onSuccess: (res) => console.log(res), // typesafe!,
   })
 }
 ```
@@ -60,11 +60,11 @@ Example client-side form:
 
 ```tsx
 import { InputHelper } from "remix-easy-mode"
-import { useExampleHook } from "./resource-route"
+import { useExample } from "./resource-route"
 import { StyledInput } from "./your-custom-input-component"
 
 export default function Index() {
-  const { Form, fields } = useExampleHook()
+  const { Form, fields } = useExample()
 
   return (
     <div>
