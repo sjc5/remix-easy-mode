@@ -11,8 +11,9 @@ Simple, typesafe toolkit for developing highly interactive Remix apps.
 - Automatic client-side form validations
 - Server-side input validations _a la_ TRPC
 - Session middleware via "bouncer" pattern
-- `onSuccess`, `onError`, and `onSettled` mutation callbacks
+- `onSuccess`, `onError`, and `onSettled` mutation callbacks _a la_ React Query
 - Input helpers are unstyled (and polymorphic, if you want to supply your own input component)
+- MIT licensed
 
 ## Installation
 
@@ -99,10 +100,6 @@ pnpm run dev
 ```
 
 Then visit `localhost:3000`.
-
-## License
-
-MIT
 
 ## Disclaimer
 
