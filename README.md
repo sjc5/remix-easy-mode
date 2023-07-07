@@ -8,7 +8,7 @@ Simple, typesafe toolkit for developing highly interactive Remix apps
 - Built on zod
 - Inspired by TRPC
 - Designed for building highly interactive apps
-- Automatic client-side form validations
+- Bone-simple client form validations
 - Server-side input validations _a la_ TRPC
 - Session middleware via "bouncer" pattern
 - `onSuccess`, `onError`, and `onSettled` mutation callbacks _a la_ react-query
