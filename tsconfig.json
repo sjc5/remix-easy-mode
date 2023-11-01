@@ -9,5 +9,6 @@
     "noUncheckedIndexedAccess": true,
     "noEmit": true,
     "jsx": "react-jsx"
-  }
+  },
+  "include": ["src", "index.ts"]
 }

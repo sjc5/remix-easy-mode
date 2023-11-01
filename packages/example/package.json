@@ -1,28 +1,29 @@
 {
   "name": "remix-easy-mode-example-app",
+  "type": "module",
   "private": true,
   "dependencies": {
-    "@mantine/core": "^6.0.14",
-    "@remix-run/node": "^1.18.0",
-    "@remix-run/react": "^1.18.0",
-    "isbot": "latest",
+    "@mantine/core": "^7.1.7",
+    "@remix-run/node": "^2.2.0",
+    "@remix-run/react": "^2.2.0",
+    "isbot": "^3.7.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "remix-easy-mode": "0.1.1"
+    "remix-easy-mode": "0.2.1"
   },
   "devDependencies": {
-    "@remix-run/dev": "^1.18.0",
-    "@remix-run/serve": "^1.18.0",
-    "@types/node": "^18.15.11",
-    "@types/react": "^18.0.25",
-    "@types/react-dom": "^18.0.8",
+    "@remix-run/dev": "^2.2.0",
+    "@remix-run/serve": "^2.2.0",
+    "@types/node": "^20.8.10",
+    "@types/react": "^18.2.33",
+    "@types/react-dom": "^18.2.14",
     "isbot": "^3.6.5",
-    "superjson": "^1.12.2",
-    "typescript": "^5.0.3",
-    "zod": "^3.21.4"
+    "superjson": "^2.2.0",
+    "typescript": "^5.2.2",
+    "zod": "^3.22.4"
   },
   "engines": {
-    "node": ">=14"
+    "node": ">=18"
   },
   "scripts": {
     "dev": "remix dev -p 1234"
