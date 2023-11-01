@@ -64,7 +64,7 @@ importers:
         specifier: ^18.2.0
         version: 18.2.0(react@18.2.0)
       remix-easy-mode:
-        specifier: workspace:*
+        specifier: 0.2.0
         version: link:../..
     devDependencies:
       '@remix-run/dev':
@@ -4080,6 +4080,7 @@ packages:
   /isbot@3.7.0:
     resolution: {integrity: sha512-9BcjlI89966BqWJmYdTnRub85sit931MyCthSIPtgoOsTjoW7A2MVa09HzPpYE2+G4vyAxfDvR0AbUGV0FInQg==}
     engines: {node: '>=12'}
+    dev: false
 
   /isexe@2.0.0:
     resolution: {integrity: sha512-RHxMLp9lnKHGHRng9QFhRCMbYAcVpn69smSGcq3f36xjgVVWThj4qqLbTLlq7Ssj8B+fIQ1EuCEGI2lKsyQeIw==}

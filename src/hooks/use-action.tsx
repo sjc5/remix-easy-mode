@@ -35,7 +35,7 @@ export function useAction<
     FromPromise<Action>["data"]
   >
 >) {
-  const fetcher = useFetcher<Action>()
+  const fetcher = useFetcher<Action>({ key: path })
   const fetcherState = getRemFetcherState(fetcher)
 
   type LocalInferred = z.infer<InputSchema>

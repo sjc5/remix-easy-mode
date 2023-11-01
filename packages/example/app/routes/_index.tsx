@@ -74,7 +74,7 @@ export default function Index() {
           <InputHelper
             type="number"
             {...fields.someNumber.props}
-            defaultValue={0}
+            defaultValue={1}
           />
 
           <button type="submit">Submit</button>
