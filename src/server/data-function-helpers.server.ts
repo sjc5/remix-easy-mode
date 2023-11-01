@@ -3,8 +3,8 @@ import { objFromCtx } from "./helpers.server"
 import { handleApiError, handleApiSuccess } from "./api-responses.server"
 import type { ZodSchema } from "zod"
 import { z } from "zod"
-import type { FromPromise } from "@kiruna/promises"
 import { SerializationHandlers } from "../hooks/use-action"
+import { FromPromise } from "../utils/from-promise"
 
 export type BouncerProps = {
   ctx: DataFunctionArgs

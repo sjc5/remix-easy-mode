@@ -8,8 +8,8 @@ import type { OnResolveProps } from "./use-on-resolve"
 import { useOnResolve } from "./use-on-resolve"
 import { getRemFetcherState } from "../utils/get-rem-fetcher-state"
 import { obj_from_fd as objectFromFormData } from "@kiruna/form-data"
-import type { FromPromise } from "@kiruna/promises"
 import { optionsFromZodShapeDef } from "../utils/options-from-zod-shape-def"
+import { FromPromise } from "../utils/from-promise"
 
 export type ClientOptions = {
   skipClientValidation?: boolean
@@ -29,7 +29,12 @@ export function useAction<
   schema: InputSchema | null | undefined
   options?: ClientOptions
   serializationHandlers?: SerializationHandlers
-} & OnResolveProps<NonNullable<FromPromise<Action>["data"]>>) {
+} & OnResolveProps<
+  NonNullable<
+    // @ts-ignore
+    FromPromise<Action>["data"]
+  >
+>) {
   const fetcher = useFetcher<Action>()
   const fetcherState = getRemFetcherState(fetcher)
 
@@ -78,7 +83,12 @@ export function useAction<
   }, [validationErrors, keys])
 
   const [onResolve, setOnResolve] = useState<
-    OnResolveProps<NonNullable<FromPromise<Action>["data"]>>
+    OnResolveProps<
+      NonNullable<
+        // @ts-ignore
+        FromPromise<Action>["data"]
+      >
+    >
   >({
     onSuccess: initialProps.onSuccess,
     onError: initialProps.onError,
@@ -91,7 +101,10 @@ export function useAction<
   })
 
   type OnResolvePropsLocal = OnResolveProps<
-    NonNullable<FromPromise<Action>["data"]>
+    NonNullable<
+      // @ts-ignore
+      FromPromise<Action>["data"]
+    >
   >
 
   const mutate = useCallback(
