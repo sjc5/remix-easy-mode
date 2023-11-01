@@ -1,6 +1,6 @@
 {
   "name": "remix-easy-mode",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "author": {
     "name": "Sam Cook",
     "email": "email@samcook.cc",
@@ -30,8 +30,8 @@
     "zod": "^3.22.4"
   },
   "peerDependencies": {
-    "@remix-run/react": ">=2.2.0",
-    "@remix-run/server-runtime": ">=2.2.0",
+    "@remix-run/react": ">=2.0.0",
+    "@remix-run/server-runtime": ">=2.0.0",
     "react": ">=18",
     "zod": ">=3"
   },
